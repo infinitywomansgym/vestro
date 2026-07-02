@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vestro by RA — Wear Your Power</title>
+<meta name="description" content="Handpicked kasavu & festive sarees. Ordered on WhatsApp, delivered free, cash on delivery — Doha to Kerala." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%234A1119'/%3E%3Ctext x='32' y='44' font-family='Georgia' font-size='36' fill='%23D9B36A' text-anchor='middle'%3EV%3C/text%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Great+Vibes&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+/* ============ TOKENS — heritage boutique: warm ivory, deep wine, antique gold ============ */
+:root{
+  --paper:#f7f1e5;            /* handloom ivory page       */
+  --paper-2:#efe6d3;          /* deeper linen tint         */
+  --card:#fcf8ef;             /* card surface              */
+  --ink:#33241f;              /* warm espresso text        */
+  --taupe:#77685c;            /* muted secondary text      */
+  --maroon:#6b1f2a;           /* deep wine — personality   */
+  --maroon-deep:#4a1119;
+  --gold:#b98a3e;             /* antique gold, decor       */
+  --gold-hi:#d9b36a;
+  --gold-text:#8f6a2e;        /* gold dark enough for text */
+  --saffron:#c9662c;          /* small accents only        */
+  --line:rgba(51,36,31,.16);
+  --display:'Gloock',Georgia,serif;
+  --body:'Jost',system-ui,sans-serif;
+  --script:'Great Vibes',cursive;
+  --gold-grad:linear-gradient(105deg,#8a5f22 0%,#d9b36a 42%,#f0d18f 50%,#d9b36a 58%,#8a5f22 100%);
+  --ease:cubic-bezier(.22,.75,.25,1);
+  --radius:20px;
+  --wa:#25d366;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--body);
+  font-weight:300;
+  line-height:1.65;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+/* handloom paper grain over everything, very faint */
+body::after{
+  content:"";position:fixed;inset:0;z-index:90;pointer-events:none;opacity:.05;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+}
+::selection{background:var(--maroon);color:var(--paper)}
+a{color:inherit;text-decoration:none}
+img,svg,canvas{display:block;max-width:100%}
+:focus-visible{outline:2px solid var(--maroon);outline-offset:3px;border-radius:4px}
+
+.wrap{width:min(1180px,92vw);margin-inline:auto}
+.section{padding:clamp(5rem,10vw,8.5rem) 0;position:relative}
+.section > .wrap{position:relative;z-index:1}
+
+/* ============ TEXT ROLES ============ */
+.eyebrow{
+  font-size:.72rem;font-weight:500;letter-spacing:.42em;text-transform:uppercase;
+  color:var(--maroon);display:flex;align-items:center;gap:.9rem;
+}
+.eyebrow::before{content:"";width:34px;height:1px;background:var(--gold);opacity:.9}
+h1,h2{font-family:var(--display);font-weight:400;line-height:1.04;letter-spacing:.005em}
+h2{font-size:clamp(2.2rem,4.6vw,3.6rem);margin:.9rem 0 1.1rem}
+.gold-word{
+  background:var(--gold-grad);background-size:220% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:shimmer 7s ease-in-out infinite;
+}
+@keyframes shimmer{0%,100%{background-position:0% 0}50%{background-position:100% 0}}
+.lead{color:var(--taupe);max-width:56ch;font-size:1.05rem}
+
+/* paisley ornament + divider */
+.orn{width:26px;height:26px;stroke:var(--gold);fill:none;stroke-width:1.5;stroke-linecap:round}
+.divider{display:flex;align-items:center;justify-content:center;gap:1.1rem;margin-bottom:2.6rem}
+.divider span{height:1px;width:min(120px,18vw)}
+.divider span:first-child{background:linear-gradient(to left,var(--gold),transparent);opacity:.6}
+.divider span:last-child{background:linear-gradient(to right,var(--gold),transparent);opacity:.6}
+
+/* Calligraphy watermark */
+.ml-mark{
+  position:absolute;inset-inline:0;pointer-events:none;user-select:none;
+  font-family:var(--script);font-weight:400;color:var(--maroon);opacity:.075;
+  font-size:clamp(7.5rem,23vw,18rem);line-height:1;text-align:center;
+  top:clamp(.5rem,3vw,2rem);z-index:0;
+}
+
+/* ============ NAV ============ */
+.nav{
+  position:fixed;inset-inline:0;top:0;z-index:60;
+  transition:background .4s var(--ease),box-shadow .4s var(--ease),backdrop-filter .4s;
+}
+.nav.scrolled{
+  background:rgba(247,241,229,.85);backdrop-filter:blur(14px);
+  box-shadow:0 1px 0 var(--line);
+}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 0}
+.brand{display:flex;align-items:baseline;gap:.55rem}
+.brand-name{font-family:var(--display);font-size:1.45rem;letter-spacing:.02em}
+.brand-by{font-size:.62rem;letter-spacing:.4em;text-transform:uppercase;color:var(--maroon)}
+.nav-links{display:flex;gap:2.2rem;align-items:center;font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;font-weight:400}
+.nav-links a{position:relative;padding:.3rem 0;color:var(--taupe);transition:color .3s}
+.nav-links a:hover{color:var(--maroon)}
+.nav-links a::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:1px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .35s var(--ease)}
+.nav-links a:hover::after{transform:scaleX(1)}
+.nav-cta{
+  border:1px solid var(--maroon);color:var(--maroon)!important;border-radius:999px;
+  padding:.5rem 1.15rem!important;transition:background .3s,color .3s;
+}
+.nav-cta:hover{background:var(--maroon);color:var(--paper)!important}
+.nav-cta::after{display:none}
+@media(max-width:760px){.nav-links a:not(.nav-cta){display:none}}
+
+/* ============ HERO ============ */
+.hero{min-height:100svh;display:flex;align-items:center;position:relative;overflow:hidden;
+  background:radial-gradient(120% 90% at 70% 20%,var(--paper-2) 0%,var(--paper) 62%);
+}
+#silk{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.hero-scrim{position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(90deg,rgba(247,241,229,.92) 0%,rgba(247,241,229,.55) 42%,rgba(247,241,229,.05) 75%),
+             linear-gradient(0deg,var(--paper) 0%,transparent 22%);
+}
+.hero-content{position:relative;z-index:2;padding:7.5rem 0 5rem}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:.55rem;margin-bottom:1.6rem;
+  border:1px solid rgba(107,31,42,.3);border-radius:999px;padding:.42rem 1rem;
+  font-size:.68rem;letter-spacing:.3em;text-transform:uppercase;color:var(--maroon);
+  background:rgba(252,248,239,.75);backdrop-filter:blur(6px);
+}
+.hero-badge .pulse{width:7px;height:7px;border-radius:50%;background:var(--gold);animation:pulse 2.2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(185,138,62,.5)}55%{box-shadow:0 0 0 9px rgba(185,138,62,0)}}
+.hero h1{font-size:clamp(3.1rem,9.2vw,7.4rem);max-width:9ch}
+.hero .lead{margin:1.5rem 0 2.4rem}
+.cta-row{display:flex;gap:1rem;flex-wrap:wrap;align-items:center}
+.btn{
+  display:inline-flex;align-items:center;gap:.65rem;border-radius:999px;cursor:pointer;
+  font-family:var(--body);font-weight:500;font-size:.86rem;letter-spacing:.12em;text-transform:uppercase;
+  padding:1.02rem 1.9rem;position:relative;overflow:hidden;transition:transform .35s var(--ease),box-shadow .35s,background .3s,color .3s,border-color .3s;
+}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--maroon);color:var(--paper);box-shadow:0 14px 30px -12px rgba(74,17,25,.55)}
+.btn-primary::before{ /* gold sheen sweep */
+  content:"";position:absolute;inset:0;transform:translateX(-130%) skewX(-18deg);
+  background:linear-gradient(105deg,transparent 35%,rgba(240,209,143,.38) 50%,transparent 65%);
+  transition:transform .7s var(--ease);
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 20px 38px -12px rgba(74,17,25,.6);background:var(--maroon-deep)}
+.btn-primary:hover::before{transform:translateX(130%) skewX(-18deg)}
+.btn-outline{border:1px solid rgba(107,31,42,.45);color:var(--maroon)}
+.btn-outline:hover{border-color:var(--maroon);background:rgba(107,31,42,.06);transform:translateY(-2px)}
+.hero-meta{margin-top:3rem;display:flex;gap:2.4rem;flex-wrap:wrap;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;color:var(--taupe)}
+.hero-meta span{display:flex;align-items:center;gap:.55rem}
+.hero-meta i{width:5px;height:5px;border-radius:50%;background:var(--saffron);display:inline-block}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);z-index:2;color:var(--maroon);opacity:.8;animation:drift 2.6s var(--ease) infinite}
+@keyframes drift{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,9px)}}
+
+/* ============ SILK SASH — a 3D ribbon of silk streaming across the page ============ */
+.ribbon-wrap{position:relative;z-index:2;height:clamp(175px,26vw,245px);touch-action:pan-y}
+.ribbon-wrap canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+.ribbon-wrap::after{ /* soft ground shadow so the sash floats */
+  content:"";position:absolute;left:50%;bottom:12%;z-index:0;
+  width:min(72%,920px);height:26px;transform:translateX(-50%);
+  background:radial-gradient(50% 50% at 50% 50%,rgba(51,36,31,.18),transparent 70%);
+  filter:blur(7px);
+}
+
+/* ============ COLLECTION ============ */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:1.6rem;margin-top:3.2rem;position:relative;z-index:1}
+.card{
+  --rx:0deg;--ry:0deg;--mx:50%;--my:50%;
+  border-radius:var(--radius);position:relative;isolation:isolate;
+  background:var(--card);
+  border:1px solid var(--line);
+  transform:perspective(950px) rotateX(var(--rx)) rotateY(var(--ry));
+  transition:transform .18s ease-out,border-color .35s,box-shadow .35s;
+  transform-style:preserve-3d;
+}
+.card:hover{border-color:rgba(185,138,62,.6);box-shadow:0 26px 55px -22px rgba(51,36,31,.32)}
+.card::after{ /* warm sheen following cursor */
+  content:"";position:absolute;inset:0;border-radius:inherit;z-index:3;pointer-events:none;
+  background:radial-gradient(420px circle at var(--mx) var(--my),rgba(217,179,106,.14),transparent 42%);
+  opacity:0;transition:opacity .35s;
+}
+.card:hover::after{opacity:1}
+.card-inner{padding:1.35rem;transform:translateZ(28px)}
+
+/* drape = velvet/forest photo mat (like their Instagram shots) + folded fabric inside */
+.drape{
+  height:250px;border-radius:calc(var(--radius) - 8px);position:relative;overflow:hidden;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.12),inset 0 -26px 44px -18px rgba(0,0,0,.5);
+}
+.mat-velvet{background:radial-gradient(130% 130% at 28% 18%,#6a222e 0%,#4a1119 55%,#360b12 100%)}
+.mat-forest{background:radial-gradient(130% 130% at 28% 18%,#1e4432 0%,#122c1f 55%,#0b1e15 100%)}
+.fold{
+  position:absolute;inset:16px;border-radius:12px;overflow:hidden;
+  box-shadow:0 14px 28px -10px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.14);
+}
+.fold::before{content:"";position:absolute;inset:0;
+  background:repeating-linear-gradient(97deg,rgba(255,255,255,0) 0 26px,rgba(255,255,255,.18) 27px 30px,rgba(40,25,15,.08) 34px 40px);
+  mix-blend-mode:soft-light;
+}
+/* zari border strip at bottom of every fold */
+.fold::after{content:"";position:absolute;left:0;right:0;bottom:0;height:42px;
+  background:
+    radial-gradient(6px 6px at 22px 50%,#5a1620 40%,transparent 44%),
+    repeating-linear-gradient(90deg,transparent 0 40px,rgba(90,22,32,.5) 40px 42px),
+    linear-gradient(180deg,#e6c26e,#b98a3e 55%,#8a5f22);
+  background-size:44px 100%,44px 100%,100% 100%;
+  border-top:1px solid rgba(90,22,32,.45);
+}
+.f-goldtissue{background:linear-gradient(140deg,#f4e6c6 0%,#e3c88e 42%,#cda760 74%,#b98a3e 100%)}
+.f-saffron{background:linear-gradient(140deg,#fbf6ea 0%,#f2ead6 55%,#f6f0e0 100%)}
+.f-saffron::after{background:
+    radial-gradient(6px 6px at 22px 50%,#5a1620 40%,transparent 44%),
+    repeating-linear-gradient(90deg,transparent 0 40px,rgba(90,22,32,.4) 40px 42px),
+    linear-gradient(180deg,#e0904c,#c9662c 55%,#9a4a1e);
+  background-size:44px 100%,44px 100%,100% 100%}
+.f-temple{background:
+    repeating-linear-gradient(90deg,transparent 0 30px,rgba(185,138,62,.4) 30px 32px),
+    linear-gradient(140deg,#f8f1de 0%,#efe2c2 60%,#e0cb9c 100%)}
+.f-marigold{background:linear-gradient(140deg,#eec886 0%,#dfa858 45%,#cd8038 78%,#b96a28 100%)}
+.fold .tassel{position:absolute;bottom:42px;display:flex;gap:14px;left:16px}
+.fold .tassel i{width:4px;height:16px;border-radius:0 0 4px 4px;background:linear-gradient(#b98a3e,#6d4b1a);opacity:.85}
+.f-saffron .tassel i{background:linear-gradient(#c9662c,#7d3a14)}
+.card h3{font-family:var(--display);font-weight:400;font-size:1.32rem;margin:1.15rem 0 .2rem;letter-spacing:.01em}
+.card .weave{font-size:.82rem;color:var(--taupe);letter-spacing:.05em}
+.card-foot{display:flex;justify-content:space-between;align-items:center;margin-top:1.05rem}
+.chip{
+  font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:var(--maroon);
+  border:1px solid rgba(107,31,42,.35);border-radius:999px;padding:.42rem .85rem;
+  transition:background .3s,color .3s,border-color .3s;
+}
+.chip:hover{background:var(--maroon);border-color:var(--maroon);color:var(--paper)}
+.arrow-link{color:var(--gold-text);font-size:1.15rem;transition:transform .3s var(--ease)}
+.card:hover .arrow-link{transform:translateX(5px)}
+
+/* ============ GIFT / ROUTE ============ */
+.gift{background:linear-gradient(180deg,var(--paper) 0%,var(--paper-2) 50%,var(--paper) 100%)}
+.gift-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(2.5rem,6vw,5.5rem);align-items:center;position:relative;z-index:1}
+@media(max-width:880px){.gift-grid{grid-template-columns:1fr}}
+.gift-grid .divider{grid-column:1/-1;margin-bottom:0}
+.route-box{
+  border:1px solid var(--line);border-radius:var(--radius);
+  background:var(--card);
+  padding:1.4rem;box-shadow:0 28px 60px -30px rgba(51,36,31,.35);
+}
+.route-svg{width:100%;height:auto}
+.route-city{font-family:var(--body);font-size:11px;letter-spacing:.3em;fill:var(--taupe);text-transform:uppercase}
+.route-city-big{font-family:var(--display);font-size:21px;fill:var(--maroon)}
+.steps{margin-top:2.3rem;display:grid;gap:1.35rem}
+.step{display:flex;gap:1.2rem;align-items:flex-start}
+.step-num{font-family:var(--display);color:var(--gold-text);font-size:1.5rem;line-height:1;min-width:2.6rem;padding-top:.15rem;position:relative}
+.step-num::after{content:"";position:absolute;left:0;bottom:-4px;width:26px;height:1px;background:rgba(185,138,62,.6)}
+.step h4{font-weight:500;font-size:1rem;letter-spacing:.04em;margin-bottom:.15rem}
+.step p{font-size:.92rem;color:var(--taupe)}
+
+/* ============ WHY ============ */
+.why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.4rem;margin-top:3rem;position:relative;z-index:1}
+.why{
+  border-top:1px solid rgba(185,138,62,.4);padding-top:1.6rem;
+  transition:transform .4s var(--ease);
+}
+.why:hover{transform:translateY(-5px)}
+.why svg{width:34px;height:34px;stroke:var(--maroon);fill:none;stroke-width:1.4;margin-bottom:1rem}
+.why h3{font-family:var(--display);font-weight:400;font-size:1.35rem;margin-bottom:.4rem}
+.why p{font-size:.92rem;color:var(--taupe)}
+
+/* ============ ORDER ============ */
+.order{
+  text-align:center;
+  background:
+    radial-gradient(60% 90% at 50% 0%,var(--paper-2),transparent 70%),
+    var(--paper);
+}
+.order .divider{justify-content:center}
+.order h2{font-size:clamp(2.4rem,5.5vw,4.2rem)}
+.order .lead{margin:1rem auto 2.6rem}
+.order-handles{margin-top:2.4rem;display:flex;gap:2.4rem;justify-content:center;flex-wrap:wrap;font-size:.85rem;letter-spacing:.16em;color:var(--taupe)}
+.order-handles a{color:var(--maroon);border-bottom:1px solid rgba(185,138,62,.55);padding-bottom:2px;transition:color .3s,border-color .3s}
+.order-handles a:hover{color:var(--ink);border-color:var(--ink)}
+
+/* ============ FOOTER — deep wine close ============ */
+footer{
+  background:var(--maroon-deep);border-top:1px solid rgba(217,179,106,.35);
+  padding:2.2rem 0 2.6rem;font-size:.78rem;letter-spacing:.14em;color:rgba(247,241,229,.7);
+}
+.foot-inner{display:flex;justify-content:space-between;gap:1.2rem;flex-wrap:wrap;align-items:center;text-transform:uppercase}
+.foot-inner .brand-name{font-size:1.1rem;text-transform:none;color:var(--paper)}
+
+/* ============ FLOATING WHATSAPP ============ */
+.wa-float{
+  position:fixed;right:1.4rem;bottom:1.4rem;z-index:70;width:58px;height:58px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;background:var(--wa);
+  box-shadow:0 12px 28px -10px rgba(37,211,102,.5),0 0 0 1px rgba(255,255,255,.4);
+  transition:transform .3s var(--ease);
+}
+.wa-float:hover{transform:scale(1.08) translateY(-2px)}
+.wa-float svg{width:30px;height:30px;fill:#fff}
+.wa-float::before{content:"";position:absolute;inset:-6px;border-radius:50%;border:1px solid rgba(37,211,102,.4);animation:pulse-ring 2.4s infinite}
+@keyframes pulse-ring{0%{transform:scale(.85);opacity:.8}70%{transform:scale(1.18);opacity:0}100%{opacity:0}}
+
+/* ============ REVEAL ============ */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+
+/* ============ REDUCED MOTION ============ */
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .scroll-hint,.hero-badge .pulse,.wa-float::before,.gold-word{animation:none}
+  .btn-primary::before{display:none}
+  .reveal{opacity:1;transform:none;transition:none}
+  .card{transition:none}
+}
+</style>
+</head>
+<body>
+
+<!-- shared paisley ornament -->
+<svg style="display:none" aria-hidden="true">
+  <symbol id="paisley" viewBox="0 0 24 24">
+    <path d="M14 3.5c4.5 1.5 7 6 6 10.5S15 21 11 20.5 4.5 16 5 12s3.5-6 6.5-5.5c2.5.4 4 2.6 3.5 4.8-.4 1.8-2 3-3.8 2.7"/>
+  </symbol>
+</svg>
+
+<!-- ================= NAV ================= -->
+<nav class="nav" id="nav">
+  <div class="wrap nav-inner">
+    <a href="#top" class="brand" aria-label="Vestro by RA — home">
+      <span class="brand-name">Vestro</span>
+      <span class="brand-by">by RA</span>
+    </a>
+    <div class="nav-links">
+      <a href="#collection">Collection</a>
+      <a href="#gift">Delivery</a>
+      <a href="#why">Why Vestro</a>
+      <a class="nav-cta" href="https://wa.me/97466194953?text=Hi%20Vestro%20by%20RA!%20I%27d%20like%20to%20place%20an%20order%20%E2%9C%A8" target="_blank" rel="noopener">Order on WhatsApp</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<header class="hero" id="top">
+  <canvas id="silk" aria-hidden="true"></canvas>
+  <div class="hero-scrim" aria-hidden="true"></div>
+
+  <div class="wrap hero-content">
+    <span class="hero-badge reveal"><i class="pulse"></i> New launch · Now delivering</span>
+    <p class="eyebrow reveal" style="transition-delay:.08s">Doha · Kerala — Online Clothing</p>
+    <h1 class="reveal" style="transition-delay:.16s">Wear Your <span class="gold-word">Power</span></h1>
+    <p class="lead reveal" style="transition-delay:.26s">
+      Handpicked kasavu &amp; festive sarees, chosen one at a time by RA.
+      Order on WhatsApp — free delivery, cash on delivery, from Kerala's looms to your Doha doorstep.
+    </p>
+    <div class="cta-row reveal" style="transition-delay:.36s">
+      <a class="btn btn-primary" href="https://wa.me/97466194953?text=Hi%20Vestro%20by%20RA!%20I%27d%20like%20to%20place%20an%20order%20%E2%9C%A8" target="_blank" rel="noopener">
+        Order on WhatsApp
+      </a>
+      <a class="btn btn-outline" href="#collection">View the collection</a>
+    </div>
+    <div class="hero-meta reveal" style="transition-delay:.46s">
+      <span><i></i>Free delivery</span>
+      <span><i></i>COD only — pay on arrival</span>
+      <span><i></i>Doha ⇄ Kerala</span>
+    </div>
+  </div>
+
+  <a class="scroll-hint" href="#collection" aria-label="Scroll to collection">
+    <svg width="20" height="30" viewBox="0 0 20 30" fill="none" stroke="currentColor" stroke-width="1.4">
+      <rect x="1" y="1" width="18" height="28" rx="9"/><line x1="10" y1="8" x2="10" y2="14"/>
+    </svg>
+  </a>
+</header>
+
+<!-- ================= SILK SASH (3D) ================= -->
+<div class="ribbon-wrap" id="ribbonWrap" aria-hidden="true">
+  <canvas id="ribbon"></canvas>
+</div>
+
+<!-- ================= COLLECTION ================= -->
+<section class="section" id="collection">
+  <span class="ml-mark" aria-hidden="true">Vestro</span>
+  <div class="wrap">
+    <p class="eyebrow reveal">The first drop</p>
+    <h2 class="reveal" style="transition-delay:.08s">Woven to be <span class="gold-word">remembered</span></h2>
+    <p class="lead reveal" style="transition-delay:.16s">
+      A small, honest edit — every drape photographed as it is, priced over a message,
+      and sent with a little extra care in the fold.
+    </p>
+
+    <div class="grid">
+      <!-- 1 -->
+      <article class="card reveal" data-tilt>
+        <div class="card-inner">
+          <div class="drape mat-velvet"><span class="fold f-goldtissue"><span class="tassel"><i></i><i></i><i></i><i></i></span></span></div>
+          <h3>Antique Gold Tissue</h3>
+          <p class="weave">Featherlight tissue · full zari body</p>
+          <div class="card-foot">
+            <a class="chip" href="https://wa.me/97466194953?text=Hi!%20Price%20for%20the%20Antique%20Gold%20Tissue%20saree%20please%20%F0%9F%91%91" target="_blank" rel="noopener">Price on WhatsApp</a>
+            <span class="arrow-link" aria-hidden="true">→</span>
+          </div>
+        </div>
+      </article>
+      <!-- 2 -->
+      <article class="card reveal" data-tilt style="transition-delay:.08s">
+        <div class="card-inner">
+          <div class="drape mat-forest"><span class="fold f-saffron"><span class="tassel"><i></i><i></i><i></i><i></i></span></span></div>
+          <h3>Kasavu · Saffron Border</h3>
+          <p class="weave">Classic cream · saffron zari edge</p>
+          <div class="card-foot">
+            <a class="chip" href="https://wa.me/97466194953?text=Hi!%20Price%20for%20the%20Kasavu%20Saffron%20Border%20saree%20please%20%F0%9F%A7%A1" target="_blank" rel="noopener">Price on WhatsApp</a>
+            <span class="arrow-link" aria-hidden="true">→</span>
+          </div>
+        </div>
+      </article>
+      <!-- 3 -->
+      <article class="card reveal" data-tilt style="transition-delay:.16s">
+        <div class="card-inner">
+          <div class="drape mat-velvet"><span class="fold f-temple"><span class="tassel"><i></i><i></i><i></i><i></i></span></span></div>
+          <h3>Ivory Temple Zari</h3>
+          <p class="weave">Soft ivory · fine gold thread lines</p>
+          <div class="card-foot">
+            <a class="chip" href="https://wa.me/97466194953?text=Hi!%20Price%20for%20the%20Ivory%20Temple%20Zari%20saree%20please%20%E2%9C%A8" target="_blank" rel="noopener">Price on WhatsApp</a>
+            <span class="arrow-link" aria-hidden="true">→</span>
+          </div>
+        </div>
+      </article>
+      <!-- 4 -->
+      <article class="card reveal" data-tilt style="transition-delay:.24s">
+        <div class="card-inner">
+          <div class="drape mat-forest"><span class="fold f-marigold"><span class="tassel"><i></i><i></i><i></i><i></i></span></span></div>
+          <h3>Marigold Festive</h3>
+          <p class="weave">Warm ochre · occasion wear</p>
+          <div class="card-foot">
+            <a class="chip" href="https://wa.me/97466194953?text=Hi!%20Price%20for%20the%20Marigold%20Festive%20saree%20please%20%F0%9F%8C%BC" target="_blank" rel="noopener">Price on WhatsApp</a>
+            <span class="arrow-link" aria-hidden="true">→</span>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <p class="lead reveal" style="margin-top:2.6rem;font-size:.92rem">
+      New pieces land on Instagram first —
+      <a href="https://instagram.com/vestro_by_ra" target="_blank" rel="noopener" style="color:var(--maroon);border-bottom:1px solid rgba(185,138,62,.55)">follow @vestro_by_ra</a>
+      to catch the next drop.
+    </p>
+  </div>
+</section>
+
+<!-- ================= GIFT ================= -->
+<section class="section gift" id="gift">
+  <span class="ml-mark" aria-hidden="true">with love</span>
+  <div class="wrap gift-grid">
+    <div class="divider reveal" aria-hidden="true"><span></span><svg class="orn"><use href="#paisley"/></svg><span></span></div>
+    <div class="route-box reveal" data-tilt>
+      <svg class="route-svg" viewBox="0 0 560 320" role="img" aria-label="Animated route from Kerala to Doha">
+        <defs>
+          <linearGradient id="routeGold" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#c9662c"/><stop offset=".5" stop-color="#b98a3e"/><stop offset="1" stop-color="#6b1f2a"/>
+          </linearGradient>
+          <radialGradient id="glow" cx=".5" cy=".5" r=".5">
+            <stop offset="0" stop-color="#d9b36a" stop-opacity=".85"/><stop offset="1" stop-color="#d9b36a" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <!-- faint stars -->
+        <g fill="#b98a3e" opacity=".35">
+          <circle cx="90" cy="60" r="1.4"/><circle cx="200" cy="40" r="1"/><circle cx="330" cy="70" r="1.3"/>
+          <circle cx="450" cy="45" r="1"/><circle cx="510" cy="110" r="1.2"/><circle cx="150" cy="120" r="1"/>
+          <circle cx="380" cy="130" r="1.1"/><circle cx="260" cy="95" r="1"/>
+        </g>
+        <!-- route -->
+        <path id="flight" d="M70 240 C 190 90, 380 90, 495 235" fill="none" stroke="url(#routeGold)" stroke-width="2" stroke-dasharray="7 8" opacity=".9"/>
+        <!-- moving parcel -->
+        <g id="parcel" transform="translate(70 240)">
+          <circle r="16" fill="url(#glow)"/>
+          <circle r="5.2" fill="#6b1f2a"/>
+        </g>
+        <!-- Kerala (origin) -->
+        <g>
+          <circle cx="70" cy="240" r="6" fill="#c9662c"/>
+          <circle cx="70" cy="240" r="12" fill="none" stroke="#c9662c" stroke-opacity=".45"/>
+          <text class="route-city" x="70" y="272" text-anchor="middle">From</text>
+          <text class="route-city-big" x="70" y="296" text-anchor="middle">Kerala</text>
+        </g>
+        <!-- Doha (home) -->
+        <g>
+          <circle cx="495" cy="235" r="6" fill="#b98a3e"/>
+          <circle cx="495" cy="235" r="12" fill="none" stroke="#b98a3e" stroke-opacity=".45"/>
+          <text class="route-city" x="495" y="268" text-anchor="middle">With love, to</text>
+          <text class="route-city-big" x="495" y="292" text-anchor="middle">Doha</text>
+        </g>
+      </svg>
+    </div>
+
+    <div>
+      <p class="eyebrow reveal">Kerala → Doha</p>
+      <h2 class="reveal" style="transition-delay:.08s">Kerala looms, <span class="gold-word">Doha doorsteps</span></h2>
+      <p class="lead reveal" style="transition-delay:.16s">
+        Vestro is Doha's home for authentic Kerala handlooms. Every saree is picked
+        from the loom towns back home and flown here — then delivered free to your
+        door, cash on delivery.
+      </p>
+      <div class="steps">
+        <div class="step reveal" style="transition-delay:.2s">
+          <span class="step-num">01</span>
+          <div><h4>Pick the drape</h4><p>Browse the collection here or on Instagram and message us the one you love.</p></div>
+        </div>
+        <div class="step reveal" style="transition-delay:.28s">
+          <span class="step-num">02</span>
+          <div><h4>Share your address</h4><p>Anywhere in Doha — or a Kerala address, if it's a surprise for someone back home.</p></div>
+        </div>
+        <div class="step reveal" style="transition-delay:.36s">
+          <span class="step-num">03</span>
+          <div><h4>We handle the rest</h4><p>Wrapped with care and delivered free. Cash on delivery — pay only when it's in your hands.</p></div>
+        </div>
+      </div>
+      <div class="cta-row reveal" style="margin-top:2.4rem;transition-delay:.42s">
+        <a class="btn btn-primary" href="https://wa.me/97466194953?text=Hi!%20I%27d%20like%20a%20saree%20delivered%20in%20Doha%20%E2%9C%A8" target="_blank" rel="noopener">Get it delivered</a>
+      </div>
+      <p class="lead reveal" style="margin-top:1.2rem;font-size:.9rem;transition-delay:.48s">
+        Gifting to Kerala instead?
+        <a href="https://wa.me/97466194953?text=Hi!%20I%27d%20like%20to%20send%20a%20saree%20as%20a%20surprise%20to%20Kerala%20%F0%9F%A4%8D" target="_blank" rel="noopener" style="color:var(--maroon);border-bottom:1px solid rgba(185,138,62,.55)">We deliver there too →</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= WHY ================= -->
+<section class="section" id="why">
+  <div class="wrap">
+    <p class="eyebrow reveal">Why Vestro</p>
+    <h2 class="reveal" style="transition-delay:.08s">Small brand, <span class="gold-word">serious care</span></h2>
+    <div class="why-grid">
+      <div class="why reveal">
+        <svg viewBox="0 0 24 24"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="19" r="1.8"/><circle cx="17.5" cy="19" r="1.8"/></svg>
+        <h3>Free delivery</h3>
+        <p>Every order ships free — across Doha and all over Kerala. No minimums, no surprises at the door.</p>
+      </div>
+      <div class="why reveal" style="transition-delay:.1s">
+        <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="11" rx="2"/><circle cx="12" cy="12.5" r="2.6"/><path d="M6.5 7V5.5h11V7"/></svg>
+        <h3>COD only</h3>
+        <p>Pay in cash when the parcel arrives. No advance, no online payment — see it first, then pay.</p>
+      </div>
+      <div class="why reveal" style="transition-delay:.2s">
+        <svg viewBox="0 0 24 24"><path d="M12 20s-7-4.2-9-8.6C1.6 8 3.6 5 6.7 5c2 0 3.6 1.1 4.3 2.6C11.7 6.1 13.3 5 15.3 5c3.1 0 5.1 3 3.7 6.4-2 4.4-9 8.6-9 8.6z"/></svg>
+        <h3>Picked by RA</h3>
+        <p>No warehouse dump — each saree is chosen, checked and folded by the person behind the brand.</p>
+      </div>
+      <div class="why reveal" style="transition-delay:.3s">
+        <svg viewBox="0 0 24 24"><path d="M12 3l2.2 4.6 5 .7-3.6 3.5.9 5-4.5-2.4-4.5 2.4.9-5L4.8 8.3l5-.7z"/></svg>
+        <h3>Message-first</h3>
+        <p>Real conversations on WhatsApp — ask for extra photos, drape videos or styling help before you decide.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ORDER ================= -->
+<section class="section order" id="order">
+  <div class="wrap">
+    <div class="divider reveal" aria-hidden="true"><span></span><svg class="orn"><use href="#paisley"/></svg><span></span></div>
+    <p class="eyebrow reveal" style="justify-content:center">Ready when you are</p>
+    <h2 class="reveal" style="transition-delay:.08s">One message <span class="gold-word">away</span></h2>
+    <p class="lead reveal" style="transition-delay:.16s">
+      Tell us the piece, the size of the blouse cut if you need one, and where it's going.
+      We'll confirm everything before it ships.
+    </p>
+    <div class="cta-row reveal" style="justify-content:center;transition-delay:.24s">
+      <a class="btn btn-primary" href="https://wa.me/97466194953?text=Hi%20Vestro%20by%20RA!%20I%27d%20like%20to%20place%20an%20order%20%E2%9C%A8" target="_blank" rel="noopener">
+        Chat on WhatsApp
+      </a>
+      <a class="btn btn-outline" href="https://instagram.com/vestro_by_ra" target="_blank" rel="noopener">@vestro_by_ra</a>
+    </div>
+    <div class="order-handles reveal" style="transition-delay:.32s">
+      <span>WhatsApp — <a href="https://wa.me/97466194953" target="_blank" rel="noopener">+974 6619 4953</a></span>
+      <span>Instagram — <a href="https://instagram.com/vestro_by_ra" target="_blank" rel="noopener">vestro_by_ra</a></span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap foot-inner">
+    <span class="brand-name">Vestro <span style="font-family:var(--body);font-size:.6rem;letter-spacing:.4em;color:var(--gold-hi)">BY RA</span></span>
+    <span>Doha · Kerala — Free delivery · COD only</span>
+    <span>© <span id="yr"></span> Vestro by RA</span>
+  </div>
+</footer>
+
+<!-- ================= FLOATING WHATSAPP ================= -->
+<a class="wa-float" href="https://wa.me/97466194953?text=Hi%20Vestro%20by%20RA!%20%E2%9C%A8" target="_blank" rel="noopener" aria-label="Chat with Vestro by RA on WhatsApp">
+  <svg viewBox="0 0 32 32"><path d="M16 3C9.4 3 4 8.3 4 14.9c0 2.6.8 5 2.3 7L4.7 27l5.3-1.6c1.9 1 4 1.6 6 1.6 6.6 0 12-5.3 12-11.9S22.6 3 16 3zm0 21.7c-1.9 0-3.7-.5-5.3-1.5l-.4-.2-3.1 1 1-3-.3-.4a9.6 9.6 0 0 1-1.7-5.6C6.2 9.5 10.6 5.2 16 5.2s9.8 4.3 9.8 9.7-4.4 9.8-9.8 9.8zm5.4-7.3c-.3-.2-1.7-.9-2-1s-.5-.2-.7.2-.8 1-.9 1.1-.3.2-.6.1a8 8 0 0 1-2.4-1.5 8.8 8.8 0 0 1-1.6-2c-.2-.3 0-.5.1-.6l.4-.5c.2-.2.2-.3.3-.5s0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4S9.9 11 9.9 12.4s1 2.8 1.2 3c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.6-.1 1.7-.7 1.9-1.4s.2-1.2.2-1.3c-.1-.1-.3-.2-.6-.3z"/></svg>
+</a>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+"use strict";
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const finePointer = window.matchMedia('(pointer: fine)').matches;
+
+/* ---------- NAV SCROLL STATE ---------- */
+const nav = document.getElementById('nav');
+const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 40);
+window.addEventListener('scroll', onScroll, {passive:true}); onScroll();
+
+/* ---------- YEAR ---------- */
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+/* ---------- SCROLL REVEALS ---------- */
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+},{threshold:.15});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ---------- 3D SILK SASH: twisting ribbon streaming across the band ---------- */
+(function(){
+  if(!window.THREE) return;
+  const wrap = document.getElementById('ribbonWrap');
+  const canvas = document.getElementById('ribbon');
+  if(!wrap || !canvas) return;
+
+  const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(30, 4, .1, 100);
+  camera.position.set(0, 0, 10);
+
+  /* ribbon texture: ivory silk body with zari borders on both long edges */
+  function sashTexture(){
+    const c = document.createElement('canvas'); c.width = 1024; c.height = 256;
+    const g = c.getContext('2d');
+    const grad = g.createLinearGradient(0,0,1024,0);
+    grad.addColorStop(0,'#f6efdc'); grad.addColorStop(.5,'#f0e4c4'); grad.addColorStop(1,'#f6efdc');
+    g.fillStyle = grad; g.fillRect(0,0,1024,256);
+    /* weave */
+    for(let x=0;x<1024;x+=5){ g.fillStyle='rgba(140,105,60,.04)'; g.fillRect(x,0,1,256); }
+    for(let y=0;y<256;y+=6){ g.fillStyle='rgba(100,70,40,.03)'; g.fillRect(0,y,1024,1); }
+    /* borders along both long edges */
+    function border(y0, flip){
+      const bh = 46;
+      const bg = g.createLinearGradient(0, flip? y0+bh : y0, 0, flip? y0 : y0+bh);
+      bg.addColorStop(0,'#e6c26e'); bg.addColorStop(.55,'#b98a3e'); bg.addColorStop(1,'#8a5f22');
+      g.fillStyle = bg; g.fillRect(0, y0, 1024, bh);
+      g.fillStyle = 'rgba(90,22,32,.5)';
+      for(let x=0;x<1024;x+=40){ g.fillRect(x, y0, 2, bh); }
+      g.fillStyle = '#5a1620';
+      for(let x=20;x<1024;x+=40){
+        g.save(); g.translate(x, y0 + bh*.5); g.rotate(Math.PI/4); g.fillRect(-5,-5,10,10); g.restore();
+      }
+      /* saffron pinstripe on the body side */
+      g.fillStyle = '#c9662c';
+      g.fillRect(0, flip? y0 - 7 : y0 + bh + 3, 1024, 3);
+      /* wine selvedge at the outer hem */
+      g.fillStyle = '#5a1620';
+      g.fillRect(0, flip? y0 + bh - 4 : y0, 1024, 4);
+    }
+    border(4, false);      /* top edge  */
+    border(206, true);     /* bottom edge */
+    const tex = new THREE.CanvasTexture(c);
+    tex.wrapS = THREE.RepeatWrapping;
+    tex.repeat.set(5, 1);
+    tex.anisotropy = 4;
+    return tex;
+  }
+
+  const LEN = 26, HGT = 1.55, SX = 220, SY = 16;
+  const geo = new THREE.PlaneGeometry(LEN, HGT, SX, SY);
+  const mat = new THREE.MeshPhongMaterial({
+    map: sashTexture(),
+    side: THREE.DoubleSide,
+    shininess: 55,
+    specular: new THREE.Color(0xf5e3b8)
+  });
+  const sash = new THREE.Mesh(geo, mat);
+  scene.add(sash);
+
+  scene.add(new THREE.AmbientLight(0xfff4e2, .78));
+  const key = new THREE.DirectionalLight(0xffeecf, .9); key.position.set(2, 4, 6); scene.add(key);
+  const rim = new THREE.PointLight(0xd9b36a, .55, 50); rim.position.set(-8, 2, 4); scene.add(rim);
+
+  const pos = geo.attributes.position;
+  const N = pos.count;
+  const ox = new Float32Array(N), oy = new Float32Array(N);
+  for(let i=0;i<N;i++){ ox[i]=pos.getX(i); oy[i]=pos.getY(i); }
+
+  /* cursor swell */
+  let px = .5, hover = 0, hoverT = 0;
+  wrap.addEventListener('pointermove', e=>{
+    const r = wrap.getBoundingClientRect();
+    px = (e.clientX - r.left)/r.width;
+    hoverT = 1;
+  });
+  ['pointerleave','pointercancel'].forEach(ev=>wrap.addEventListener(ev, ()=>{ hoverT = 0; }));
+
+  function wave(t){
+    const mx = (px - .5) * LEN;
+    for(let i=0;i<N;i++){
+      const x = ox[i], y0 = oy[i];
+      const g = hover * 1.05 * Math.exp(-((x-mx)*(x-mx))/6); /* localized rise near cursor */
+      const th = Math.sin(x*0.42 - t*1.0)*1.15 + g*0.8;       /* traveling twist */
+      const y = y0*Math.cos(th)
+              + Math.sin(x*0.5 + t*0.85)*0.42
+              + Math.sin(x*0.18 - t*0.5)*0.22
+              + g*0.55;
+      const z = y0*Math.sin(th)
+              + Math.cos(x*0.33 - t*0.7)*0.35;
+      pos.setY(i, y); pos.setZ(i, z);
+    }
+    pos.needsUpdate = true;
+    geo.computeVertexNormals();
+  }
+
+  function resize(){
+    const w = wrap.clientWidth, h = wrap.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w/h;
+    camera.updateProjectionMatrix();
+    /* stretch the sash so it always runs past both screen edges */
+    const visW = 2 * camera.position.z * Math.tan(camera.fov * Math.PI/360) * camera.aspect;
+    sash.scale.x = (visW * 1.15) / LEN;
+    renderer.render(scene, camera);
+  }
+  window.addEventListener('resize', resize, {passive:true}); resize();
+
+  if(reduced){
+    wave(2.1);
+    renderer.render(scene, camera);
+    return;
+  }
+
+  /* animate only while the band is on screen */
+  let visible = false, raf = null;
+  function loop(ms){
+    const t = ms*0.001;
+    hover += (hoverT - hover)*0.06;
+    wave(t);
+    renderer.render(scene, camera);
+    raf = requestAnimationFrame(loop);
+  }
+  function start(){ if(raf===null){ raf = requestAnimationFrame(loop); } }
+  function stop(){ if(raf!==null){ cancelAnimationFrame(raf); raf = null; } }
+  const rio = new IntersectionObserver(es=>{
+    es.forEach(en=>{ visible = en.isIntersecting; visible ? start() : stop(); });
+  },{threshold:0});
+  rio.observe(wrap);
+  document.addEventListener('visibilitychange', ()=>{
+    if(document.hidden){ stop(); } else if(visible){ start(); }
+  });
+})();
+
+/* ---------- 3D TILT CARDS ---------- */
+if(finePointer && !reduced){
+  document.querySelectorAll('[data-tilt]').forEach(card=>{
+    const max = 9;
+    card.addEventListener('pointermove', e=>{
+      const r = card.getBoundingClientRect();
+      const px = (e.clientX - r.left)/r.width;
+      const py = (e.clientY - r.top)/r.height;
+      card.style.setProperty('--ry', ((px - .5)*max*2).toFixed(2)+'deg');
+      card.style.setProperty('--rx', ((.5 - py)*max*2).toFixed(2)+'deg');
+      card.style.setProperty('--mx', (px*100).toFixed(1)+'%');
+      card.style.setProperty('--my', (py*100).toFixed(1)+'%');
+    });
+    card.addEventListener('pointerleave', ()=>{
+      card.style.setProperty('--rx','0deg'); card.style.setProperty('--ry','0deg');
+    });
+  });
+}
+
+/* ---------- DOHA → KERALA PARCEL ---------- */
+(function(){
+  const path = document.getElementById('flight');
+  const parcel = document.getElementById('parcel');
+  if(!path || !parcel) return;
+  const len = path.getTotalLength();
+  if(reduced){
+    const p = path.getPointAtLength(len*.62);
+    parcel.setAttribute('transform', `translate(${p.x} ${p.y})`);
+    return;
+  }
+  let start = null;
+  const DUR = 5200;
+  function frame(ts){
+    if(start===null) start = ts;
+    let t = ((ts - start) % DUR) / DUR;
+    // ease in-out
+    t = t<.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2;
+    const p = path.getPointAtLength(len*t);
+    parcel.setAttribute('transform', `translate(${p.x} ${p.y})`);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+
+/* ---------- THREE.JS FLOWING SILK (ivory kasavu, gold + wine border) ---------- */
+(function(){
+  if(!window.THREE) return;
+  const canvas = document.getElementById('silk');
+  const hero = document.querySelector('.hero');
+  if(!canvas || !hero) return;
+
+  const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(38, 1, .1, 100);
+  camera.position.set(0, .35, 9.6);
+
+  /* --- ivory kasavu silk texture with a real zari border story --- */
+  function silkTexture(){
+    const c = document.createElement('canvas'); c.width = c.height = 1024;
+    const g = c.getContext('2d');
+    const grad = g.createLinearGradient(0,0,1024,880);
+    grad.addColorStop(0.00,'#ecdfc3');
+    grad.addColorStop(0.22,'#f8f2e2');
+    grad.addColorStop(0.48,'#eddcb4');
+    grad.addColorStop(0.74,'#e0c68f');
+    grad.addColorStop(1.00,'#cfae70');
+    g.fillStyle = grad; g.fillRect(0,0,1024,1024);
+    /* weave threads */
+    for(let x=0;x<1024;x+=6){
+      g.fillStyle = 'rgba(140,105,60,'+(x%18===0?0.07:0.035)+')';
+      g.fillRect(x,0,1,1024);
+    }
+    for(let y=0;y<1024;y+=9){
+      g.fillStyle = 'rgba(100,70,40,0.04)';
+      g.fillRect(0,y,1024,1);
+    }
+    /* zari border: gold band + wine diamond motifs + saffron pinstripe + wine selvedge */
+    const bh = 172, by = 1024-bh;
+    const bg = g.createLinearGradient(0,by,0,1024);
+    bg.addColorStop(0,'#e6c26e'); bg.addColorStop(.55,'#b98a3e'); bg.addColorStop(1,'#8a5f22');
+    g.fillStyle = bg; g.fillRect(0,by,1024,bh);
+    g.fillStyle = 'rgba(90,22,32,.5)';
+    for(let x=0;x<1024;x+=44){ g.fillRect(x,by,2,bh); }
+    g.save(); g.fillStyle = '#5a1620';
+    for(let x=22;x<1024;x+=44){
+      g.save(); g.translate(x, by+bh*.42); g.rotate(Math.PI/4); g.fillRect(-7,-7,14,14); g.restore();
+    }
+    g.restore();
+    /* saffron pinstripe above the border */
+    g.fillStyle = '#c9662c'; g.fillRect(0,by-10,1024,4);
+    /* wine selvedge line at the very hem */
+    g.fillStyle = '#5a1620'; g.fillRect(0,1024-8,1024,8);
+    g.strokeStyle = 'rgba(90,22,32,.5)'; g.lineWidth = 3;
+    g.beginPath(); g.moveTo(0,by+1.5); g.lineTo(1024,by+1.5); g.stroke();
+    const tex = new THREE.CanvasTexture(c);
+    tex.anisotropy = 4;
+    return tex;
+  }
+
+  const W = 15, H = 8.4, SX = 110, SY = 64;
+  const geo = new THREE.PlaneGeometry(W, H, SX, SY);
+  const mat = new THREE.MeshPhongMaterial({
+    map: silkTexture(),
+    side: THREE.DoubleSide,
+    shininess: 45,
+    specular: new THREE.Color(0xf5e3b8)
+  });
+  const cloth = new THREE.Mesh(geo, mat);
+
+  const group = new THREE.Group();
+  group.add(cloth);
+  group.rotation.set(-0.34, -0.18, -0.10);
+  group.position.set(1.4, -0.15, 0);
+  scene.add(group);
+
+  scene.add(new THREE.AmbientLight(0xfff6e6, .72));
+  const key = new THREE.DirectionalLight(0xfff1d6, .85); key.position.set(4,6,6); scene.add(key);
+  const rim = new THREE.PointLight(0xd9b36a, .5, 60); rim.position.set(-7,-2,5); scene.add(rim);
+
+  /* wave animation over original vertex grid */
+  const pos = geo.attributes.position;
+  const N = pos.count;
+  const ox = new Float32Array(N), oy = new Float32Array(N);
+  for(let i=0;i<N;i++){ ox[i]=pos.getX(i); oy[i]=pos.getY(i); }
+
+  function wave(t){
+    for(let i=0;i<N;i++){
+      const x = ox[i], y = oy[i];
+      const z =
+        Math.sin(x*0.85 + t*1.05)*0.36 +
+        Math.sin(x*0.42 + y*0.62 + t*0.72)*0.27 +
+        Math.cos(y*1.25 + t*0.9)*0.13;
+      pos.setZ(i, z);
+    }
+    pos.needsUpdate = true;
+    geo.computeVertexNormals();
+  }
+
+  /* size to hero */
+  function resize(){
+    const w = hero.clientWidth, h = hero.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w/h;
+    camera.updateProjectionMatrix();
+    renderer.render(scene, camera);
+  }
+  window.addEventListener('resize', resize); resize();
+
+  /* mouse parallax */
+  let tx = 0, ty = 0;
+  if(finePointer && !reduced){
+    hero.addEventListener('pointermove', e=>{
+      const r = hero.getBoundingClientRect();
+      tx = ((e.clientX - r.left)/r.width - .5);
+      ty = ((e.clientY - r.top)/r.height - .5);
+    });
+  }
+
+  if(reduced){
+    wave(1.4);
+    renderer.render(scene, camera);
+    return;
+  }
+
+  const baseRX = group.rotation.x, baseRY = group.rotation.y;
+  let raf;
+  function loop(ms){
+    const t = ms*0.001;
+    wave(t);
+    group.rotation.y += ((baseRY + tx*0.12) - group.rotation.y)*0.05;
+    group.rotation.x += ((baseRX + ty*0.08) - group.rotation.x)*0.05;
+    renderer.render(scene, camera);
+    raf = requestAnimationFrame(loop);
+  }
+  raf = requestAnimationFrame(loop);
+
+  document.addEventListener('visibilitychange', ()=>{
+    if(document.hidden){ cancelAnimationFrame(raf); }
+    else { raf = requestAnimationFrame(loop); }
+  });
+})();
+})();
+</script>
+</body>
+</html>
