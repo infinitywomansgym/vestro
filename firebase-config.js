@@ -13,5 +13,8 @@ window.VESTRO_FIREBASE_CONFIG = {
   appId: "PASTE_YOUR_APP_ID"
 };
 
-/* Your WhatsApp number — country code + number, digits only */
+/* Your WhatsApp numbers — country code + number, digits only.
+   Orders open a chat with the first number; customers then get an
+   "Also send to our 2nd number" button for the second one. */
 window.VESTRO_WHATSAPP = "97466194953";
+window.VESTRO_WHATSAPP_2 = "97466192509";   /* leave "" if not needed */
