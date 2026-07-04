@@ -223,8 +223,6 @@ h2{font-size:clamp(2.2rem,4.6vw,3.6rem);margin:.9rem 0 1.1rem}
   transition:background .3s,color .3s,border-color .3s;
 }
 .chip:hover{background:var(--maroon);border-color:var(--maroon);color:var(--paper)}
-.arrow-link{color:var(--gold-text);font-size:1.15rem;transition:transform .3s var(--ease)}
-.card:hover .arrow-link{transform:translateX(5px)}
 
 /* photo drape (product photos added from the admin portal) */
 .drape-photo{background-size:cover;background-position:center top}
