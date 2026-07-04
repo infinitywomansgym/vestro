@@ -98,13 +98,20 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold)}
 #emptyState{text-align:center;padding:3rem 1rem;color:var(--taupe)}
 #emptyState .btn{margin-top:1.2rem}
 
-/* dialog / product form */
-dialog{border:none;border-radius:var(--radius);background:var(--card);color:var(--ink);width:min(560px,94vw);padding:0;box-shadow:0 40px 90px -30px rgba(51,36,31,.5)}
-dialog::backdrop{background:rgba(51,36,31,.5);backdrop-filter:blur(3px)}
-.dlg-head{background:var(--maroon-deep);color:var(--paper);padding:1rem 1.6rem;font-family:var(--display);font-size:1.2rem;display:flex;justify-content:space-between;align-items:center}
-.dlg-head button{background:none;border:none;color:rgba(247,241,229,.8);font-size:1.5rem;cursor:pointer;line-height:1}
-.dlg-body{padding:.4rem 1.6rem 1.6rem;max-height:75svh;overflow-y:auto}
-.dlg-actions{display:flex;gap:.8rem;margin-top:1.6rem;flex-wrap:wrap}
+/* add / edit product page */
+.back-link{
+  background:none;border:none;cursor:pointer;font-family:var(--body);
+  color:var(--maroon);font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;
+  padding:.3rem 0;margin-bottom:1rem;border-bottom:1px solid rgba(185,138,62,.5);
+}
+.back-link:hover{color:var(--ink);border-color:var(--ink)}
+#formView h1{margin-bottom:1.2rem}
+.form-panel{max-width:620px;padding:1.8rem 1.8rem 2rem}
+.dlg-actions{display:flex;gap:.8rem;margin-top:1.8rem;flex-wrap:wrap}
+@media(max-width:520px){
+  .form-panel{padding:1.3rem 1.1rem 1.6rem}
+  .dlg-actions .btn{width:100%}
+}
 
 /* photo picker */
 .photo-box{display:flex;gap:1rem;align-items:center;flex-wrap:wrap}
@@ -188,14 +195,12 @@ footer{padding:1.6rem 0;text-align:center;font-size:.72rem;letter-spacing:.16em;
       <button class="btn btn-ghost" id="seedBtn">Load the 4 starter sarees</button>
     </div>
   </section>
-</main>
 
-<footer>Vestro by RA · Admin portal</footer>
-
-<!-- ===== ADD / EDIT DIALOG ===== -->
-<dialog id="prodDialog">
-  <div class="dlg-head"><span id="dlgTitle">Add product</span><button type="button" id="dlgClose" aria-label="Close">×</button></div>
-  <div class="dlg-body">
+  <!-- ===== ADD / EDIT PAGE ===== -->
+  <section id="formView" class="hiddenview">
+    <button type="button" class="back-link" id="backBtn">← Back to collection</button>
+  <h1 id="dlgTitle">Add product</h1>
+  <div class="panel form-panel">
     <form id="prodForm">
       <label>Photo (optional — a phone photo is perfect)</label>
       <div class="photo-box">
@@ -240,7 +245,10 @@ footer{padding:1.6rem 0;text-align:center;font-size:.72rem;letter-spacing:.16em;
       <p class="form-msg" id="formMsg"></p>
     </form>
   </div>
-</dialog>
+  </section>
+</main>
+
+<footer>Vestro by RA · Admin portal</footer>
 
 <script src="firebase-config.js"></script>
 <script type="module">
@@ -358,7 +366,7 @@ async function init(){
 
       const edit = document.createElement('button');
       edit.className = 'btn btn-ghost mini'; edit.textContent = 'Edit';
-      edit.addEventListener('click', ()=> openDialog(p));
+      edit.addEventListener('click', ()=> openForm(p));
       actions.appendChild(edit);
 
       const del = document.createElement('button');
@@ -393,8 +401,7 @@ async function init(){
     refresh();
   });
 
-  /* ---------- add / edit dialog ---------- */
-  const dlg = $('prodDialog');
+  /* ---------- add / edit page ---------- */
   let editing = null;      /* product being edited, or null for new */
   let photoData = '';      /* compressed data-URL or '' */
   let chosenStyle = 'goldtissue';
@@ -416,7 +423,7 @@ async function init(){
     document.querySelectorAll('#swatches .sw').forEach(s=> s.classList.toggle('sel', s.dataset.style === style));
   }
 
-  function openDialog(p){
+  function openForm(p){
     editing = p || null;
     $('dlgTitle').textContent = p ? 'Edit product' : 'Add product';
     $('pName').value = p ? p.name : '';
@@ -427,12 +434,19 @@ async function init(){
     document.querySelector(`input[name=pStatus][value=${p ? p.status : 'available'}]`).checked = true;
     $('formMsg').textContent = '';
     setPreview();
-    dlg.showModal();
+    show($('dashView'), false);
+    show($('formView'));
+    window.scrollTo({ top: 0 });
+  }
+  function closeForm(){
+    show($('formView'), false);
+    show($('dashView'));
+    window.scrollTo({ top: 0 });
   }
 
-  $('addBtn').addEventListener('click', ()=> openDialog(null));
-  $('dlgClose').addEventListener('click', ()=> dlg.close());
-  $('cancelBtn').addEventListener('click', ()=> dlg.close());
+  $('addBtn').addEventListener('click', ()=> openForm(null));
+  $('backBtn').addEventListener('click', closeForm);
+  $('cancelBtn').addEventListener('click', closeForm);
 
   document.querySelectorAll('#swatches .sw').forEach(s=>
     s.addEventListener('click', ()=> setStyle(s.dataset.style)));
@@ -504,7 +518,7 @@ async function init(){
         await addDoc(col, { ...payload, createdAt: Date.now() });
       }
       msg.classList.add('ok'); msg.textContent = 'Saved ✓';
-      setTimeout(()=>{ msg.classList.remove('ok'); dlg.close(); }, 450);
+      setTimeout(()=>{ msg.classList.remove('ok'); closeForm(); }, 450);
       refresh();
     }catch(err){
       msg.textContent = 'Could not save: ' + (err.message || err);
