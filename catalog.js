@@ -7,7 +7,6 @@
 "use strict";
 
 const WA = window.VESTRO_WHATSAPP || "97466194953";
-const WA2 = window.VESTRO_WHATSAPP_2 || "";
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const finePointer = window.matchMedia('(pointer: fine)').matches;
 
@@ -57,10 +56,10 @@ function singleOrderLink(p){
   const msg = `Hi Vestro by RA! I'd like to order the *${p.name}*${price} ✨\nPlease confirm availability & delivery.`;
   return `https://wa.me/${WA}?text=${encodeURIComponent(msg)}`;
 }
-function basketOrderLink(items, number){
+function basketOrderLink(items){
   const lines = items.map((p,i)=> `${i+1}. ${p.name}${p.price ? ' — '+p.price : ''}`);
   const msg = `Hi Vestro by RA! ✨ I'd like to order these:\n\n${lines.join('\n')}\n\nTotal pieces: ${items.length}\nPlease confirm availability, price & delivery.`;
-  return `https://wa.me/${number || WA}?text=${encodeURIComponent(msg)}`;
+  return `https://wa.me/${WA}?text=${encodeURIComponent(msg)}`;
 }
 
 /* ---------- render ---------- */
@@ -68,7 +67,6 @@ const grid = document.getElementById('productGrid');
 const bar      = document.getElementById('cartBar');
 const barCount = document.getElementById('cartCount');
 const barSend  = document.getElementById('cartSend');
-const barSend2 = document.getElementById('cartSend2');
 const barClear = document.getElementById('cartClear');
 if(!grid) return;
 
@@ -124,10 +122,6 @@ function updateBar(){
   bar.hidden = false;
   barCount.textContent = cart.length === 1 ? '1 saree selected' : `${cart.length} sarees selected`;
   barSend.href = basketOrderLink(cart);
-  if(barSend2){
-    barSend2.href = basketOrderLink(cart, WA2);
-    barSend2.hidden = true; /* revealed after the first send */
-  }
 }
 
 function cardFor(p, i){
@@ -176,9 +170,6 @@ if(products.length === 0){
 }
 
 /* basket bar events */
-if(barSend && barSend2 && WA2){
-  barSend.addEventListener('click', ()=>{ barSend2.hidden = false; });
-}
 if(barClear) barClear.addEventListener('click', ()=>{
   cart = []; writeCart(cart); updateBar();
   grid.querySelectorAll('.chip-add').forEach(b=>{ b.textContent='Add to order'; b.classList.remove('chip-added'); });

@@ -8,7 +8,7 @@ Handpicked kasavu & festive saree boutique. Doha ⇄ Kerala · free delivery · 
 ## How it works
 
 - Customers pick sarees with **Add to order** — one tap sends a WhatsApp message
-  listing everything they chose (+974 6619 4953, with a follow-up button for the 2nd number).
+  listing everything they chose (+974 6619 4953).
 - The owner manages everything at **/admin**: add products with photos, set prices,
   mark **Sold out**, or **Hide** items. Changes appear on the site instantly.
 - No server to maintain: hosted free on GitHub Pages, products stored in

@@ -263,15 +263,8 @@ h2{font-size:clamp(2.2rem,4.6vw,3.6rem);margin:.9rem 0 1.1rem}
 .cart-clear:hover{color:var(--paper)}
 .cart-send{padding:.72rem 1.35rem;font-size:.74rem;background:var(--wa);box-shadow:none}
 .cart-send:hover{background:#1fb457}
-.cart-send-2{
-  font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;
-  color:var(--gold-hi);border-bottom:1px solid rgba(217,179,106,.5);padding-bottom:1px;
-  transition:color .3s;
-}
-.cart-send-2:hover{color:var(--paper)}
 @media(max-width:640px){
-  .cart-bar{left:1rem;right:calc(1.6rem + 62px);transform:none;justify-content:space-between;gap:.6rem;padding-left:1rem;flex-wrap:wrap;border-radius:24px}
-  .cart-send-2{width:100%;text-align:center;border-bottom:none;padding:.15rem 0 .35rem}
+  .cart-bar{left:1rem;right:calc(1.6rem + 62px);transform:none;justify-content:space-between;gap:.6rem;padding-left:1rem}
   @keyframes cart-in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
   .cart-bar span{font-size:.68rem;letter-spacing:.1em}
   .cart-send{padding:.62rem 1rem;font-size:.66rem}
