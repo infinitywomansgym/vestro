@@ -244,30 +244,65 @@ h2{font-size:clamp(2.2rem,4.6vw,3.6rem);margin:.9rem 0 1.1rem}
 .chip-sold:hover{background:none;color:var(--maroon);border-color:rgba(107,31,42,.35)}
 
 /* ============ ORDER BASKET BAR ============ */
-.cart-bar{
+.cart-dock{
   position:fixed;left:50%;bottom:1.4rem;transform:translateX(-50%);z-index:65;
+  display:flex;flex-direction:column;align-items:center;gap:.65rem;
+}
+.cart-bar{
   display:flex;align-items:center;gap:1.1rem;
   background:var(--maroon-deep);color:var(--paper);
   border:1px solid rgba(217,179,106,.45);border-radius:999px;
-  padding:.5rem .55rem .5rem 1.4rem;
+  padding:.5rem .55rem .5rem 1.2rem;
   box-shadow:0 18px 44px -14px rgba(74,17,25,.65);
   animation:cart-in .45s var(--ease);
 }
-@keyframes cart-in{from{opacity:0;transform:translate(-50%,16px)}to{opacity:1;transform:translate(-50%,0)}}
-.cart-bar span{font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;white-space:nowrap}
+@keyframes cart-in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.cart-toggle{
+  background:none;border:none;cursor:pointer;color:var(--paper);
+  font-family:var(--body);display:flex;align-items:center;gap:.55rem;padding:.3rem 0;
+}
+.cart-toggle span{font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;white-space:nowrap;border-bottom:1px dashed rgba(217,179,106,.6);padding-bottom:2px}
+.cart-toggle .chev{
+  width:8px;height:8px;flex:none;
+  border-right:1.6px solid var(--gold-hi);border-bottom:1.6px solid var(--gold-hi);
+  transform:rotate(-135deg) translate(-1px,-1px);transition:transform .3s var(--ease);
+}
+.cart-toggle[aria-expanded="true"] .chev{transform:rotate(45deg)}
 .cart-clear{
   background:none;border:none;cursor:pointer;color:rgba(247,241,229,.65);
   font-family:var(--body);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
   padding:.3rem .2rem;transition:color .3s;
 }
 .cart-clear:hover{color:var(--paper)}
-.cart-send{padding:.72rem 1.35rem;font-size:.74rem;background:var(--wa);box-shadow:none}
+.cart-send{padding:.72rem 1.35rem;font-size:.74rem;background:var(--wa);box-shadow:none;white-space:nowrap}
 .cart-send:hover{background:#1fb457}
+/* the "what's in my order" list */
+.cart-panel{
+  width:min(360px,92vw);max-height:44svh;overflow-y:auto;
+  background:var(--card);border:1px solid rgba(185,138,62,.45);border-radius:18px;
+  box-shadow:0 26px 60px -22px rgba(51,36,31,.45);
+  padding:.55rem .7rem;animation:cart-in .3s var(--ease);
+}
+.cart-item{display:flex;align-items:center;gap:.8rem;padding:.55rem .2rem;border-bottom:1px solid var(--line)}
+.cart-item:last-child{border-bottom:none}
+.cart-item-thumb{width:42px;height:42px;border-radius:10px;flex:none;background-size:cover;background-position:center top;border:1px solid var(--line)}
+.cart-item-info{flex:1;min-width:0}
+.cart-item-info h4{font-family:var(--display);font-weight:400;font-size:.98rem;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cart-item-info p{font-size:.76rem;color:var(--gold-text);letter-spacing:.04em}
+.cart-item-x{
+  background:none;border:1px solid rgba(107,31,42,.3);border-radius:50%;cursor:pointer;
+  color:var(--maroon);width:26px;height:26px;line-height:1;font-size:.95rem;flex:none;
+  transition:background .25s,color .25s;
+}
+.cart-item-x:hover{background:var(--maroon);color:var(--paper)}
 @media(max-width:640px){
-  .cart-bar{left:1rem;right:calc(1.6rem + 62px);transform:none;justify-content:space-between;gap:.6rem;padding-left:1rem}
-  @keyframes cart-in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-  .cart-bar span{font-size:.68rem;letter-spacing:.1em}
-  .cart-send{padding:.62rem 1rem;font-size:.66rem}
+  .cart-dock{left:1rem;right:calc(1.6rem + 62px);transform:none;align-items:stretch}
+  .cart-bar{justify-content:space-between;gap:.5rem;padding-left:1rem}
+  .cart-clear{display:none}
+  .cart-toggle span{font-size:.68rem;letter-spacing:.1em}
+  .cart-send{padding:.62rem 1.05rem;font-size:.68rem}
+  .cart-send .on-wa{display:none}
+  .cart-panel{width:100%}
 }
 
 /* ============ GIFT / ROUTE ============ */

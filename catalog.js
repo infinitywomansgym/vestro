@@ -64,10 +64,12 @@ function basketOrderLink(items){
 
 /* ---------- render ---------- */
 const grid = document.getElementById('productGrid');
-const bar      = document.getElementById('cartBar');
-const barCount = document.getElementById('cartCount');
-const barSend  = document.getElementById('cartSend');
-const barClear = document.getElementById('cartClear');
+const bar       = document.getElementById('cartBar');
+const barCount  = document.getElementById('cartCount');
+const barSend   = document.getElementById('cartSend');
+const barClear  = document.getElementById('cartClear');
+const barPanel  = document.getElementById('cartPanel');
+const barToggle = document.getElementById('cartToggle');
 if(!grid) return;
 
 let products = await loadProducts();
@@ -116,12 +118,59 @@ function toggleCart(p, btn){
   updateBar();
 }
 
+function removeFromCart(id){
+  cart = cart.filter(c => c.id !== id);
+  writeCart(cart);
+  const btn = grid.querySelector(`.chip-add[data-id="${CSS.escape(id)}"]`);
+  if(btn){ btn.textContent = 'Add to order'; btn.classList.remove('chip-added'); }
+  updateBar();
+}
+
+/* mini thumbnails for the basket list */
+const THUMB_GRAD = {
+  goldtissue:'linear-gradient(140deg,#f4e6c6 0%,#e3c88e 42%,#cda760 74%,#b98a3e 100%)',
+  saffron:   'linear-gradient(140deg,#fbf6ea 0%,#f2ead6 55%,#e0904c 100%)',
+  temple:    'linear-gradient(140deg,#f8f1de 0%,#efe2c2 60%,#e0cb9c 100%)',
+  marigold:  'linear-gradient(140deg,#eec886 0%,#dfa858 45%,#cd8038 100%)'
+};
+
+function renderPanel(){
+  if(!barPanel) return;
+  barPanel.textContent = '';
+  cart.forEach(c=>{
+    const p = products.find(x => x.id === c.id) || {};
+    const row = el('div','cart-item');
+    const thumb = el('div','cart-item-thumb');
+    if(p.image){ thumb.style.backgroundImage = `url("${p.image.replace(/"/g,'%22')}")`; }
+    else{ thumb.style.background = THUMB_GRAD[p.style] || THUMB_GRAD.goldtissue; }
+    row.appendChild(thumb);
+    const info = el('div','cart-item-info');
+    info.appendChild(el('h4', null, c.name));
+    info.appendChild(el('p', null, c.price || 'Price on WhatsApp'));
+    row.appendChild(info);
+    const x = el('button','cart-item-x','×');
+    x.type = 'button';
+    x.setAttribute('aria-label', `Remove ${c.name} from order`);
+    x.addEventListener('click', ()=> removeFromCart(c.id));
+    row.appendChild(x);
+    barPanel.appendChild(row);
+  });
+}
+
+let panelOpen = false;
+function setPanel(open){
+  panelOpen = open;
+  if(barPanel) barPanel.hidden = !open;
+  if(barToggle) barToggle.setAttribute('aria-expanded', String(open));
+}
+
 function updateBar(){
   if(!bar) return;
-  if(cart.length === 0){ bar.hidden = true; return; }
+  if(cart.length === 0){ bar.hidden = true; setPanel(false); return; }
   bar.hidden = false;
   barCount.textContent = cart.length === 1 ? '1 saree selected' : `${cart.length} sarees selected`;
   barSend.href = basketOrderLink(cart);
+  renderPanel();
 }
 
 function cardFor(p, i){
@@ -148,6 +197,7 @@ function cardFor(p, i){
     const add = el('button','chip chip-add', inCart(p) ? 'Added ✓' : 'Add to order');
     if(inCart(p)) add.classList.add('chip-added');
     add.type = 'button';
+    add.dataset.id = p.id;
     add.addEventListener('click', ()=> toggleCart(p, add));
     foot.appendChild(add);
 
@@ -170,6 +220,7 @@ if(products.length === 0){
 }
 
 /* basket bar events */
+if(barToggle) barToggle.addEventListener('click', ()=> setPanel(!panelOpen));
 if(barClear) barClear.addEventListener('click', ()=>{
   cart = []; writeCart(cart); updateBar();
   grid.querySelectorAll('.chip-add').forEach(b=>{ b.textContent='Add to order'; b.classList.remove('chip-added'); });

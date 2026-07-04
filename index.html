@@ -241,10 +241,15 @@
 </footer>
 
 <!-- ================= ORDER BASKET BAR ================= -->
-<div class="cart-bar" id="cartBar" hidden>
-  <span id="cartCount">0 selected</span>
-  <button type="button" id="cartClear" class="cart-clear">Clear</button>
-  <a class="btn btn-primary cart-send" id="cartSend" href="#" target="_blank" rel="noopener">Order on WhatsApp</a>
+<div class="cart-dock" id="cartBar" hidden>
+  <div class="cart-panel" id="cartPanel" hidden></div>
+  <div class="cart-bar">
+    <button type="button" class="cart-toggle" id="cartToggle" aria-expanded="false" aria-controls="cartPanel">
+      <span id="cartCount">0 selected</span><i class="chev" aria-hidden="true"></i>
+    </button>
+    <button type="button" id="cartClear" class="cart-clear">Clear</button>
+    <a class="btn btn-primary cart-send" id="cartSend" href="#" target="_blank" rel="noopener">Order<span class="on-wa">&nbsp;on WhatsApp</span></a>
+  </div>
 </div>
 
 <!-- ================= FLOATING WHATSAPP ================= -->
