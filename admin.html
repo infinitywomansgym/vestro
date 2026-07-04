@@ -227,6 +227,13 @@ footer{padding:1.6rem 0;text-align:center;font-size:.72rem;letter-spacing:.16em;
         <button type="button" class="sw t-marigold" data-style="marigold" title="Marigold"></button>
       </div>
 
+      <label for="pCat">Category</label>
+      <select id="pCat">
+        <option value="saree">Saree</option>
+        <option value="modern">Modern wear</option>
+        <option value="workwear">Work wear</option>
+      </select>
+
       <label for="pName">Name *</label>
       <input type="text" id="pName" required maxlength="60" placeholder="e.g. Rose Gold Kasavu" />
 
@@ -346,9 +353,12 @@ async function init(){
       if(cover) thumb.style.backgroundImage = `url("${cover}")`;
       row.appendChild(thumb);
 
+      const CAT_LABEL = { saree:'Saree', modern:'Modern wear', workwear:'Work wear' };
       const info = document.createElement('div'); info.className = 'row-info';
       const h = document.createElement('h3'); h.textContent = p.name; info.appendChild(h);
-      if(p.weave){ const w = document.createElement('p'); w.textContent = p.weave; info.appendChild(w); }
+      const w = document.createElement('p');
+      w.textContent = (CAT_LABEL[p.category] || 'Saree') + (p.weave ? ' · ' + p.weave : '');
+      info.appendChild(w);
       const pr = document.createElement('p'); pr.className = 'p-price';
       pr.textContent = p.price || 'Price on WhatsApp'; info.appendChild(pr);
       row.appendChild(info);
@@ -446,6 +456,7 @@ async function init(){
     $('pName').value = p ? p.name : '';
     $('pWeave').value = p ? (p.weave || '') : '';
     $('pPrice').value = p ? (p.price || '') : '';
+    $('pCat').value = p && ['saree','modern','workwear'].includes(p.category) ? p.category : 'saree';
     photos = p ? (p.images && p.images.length ? [...p.images] : (p.image ? [p.image] : [])) : [];
     setStyle(p && p.style ? p.style : 'goldtissue');
     document.querySelector(`input[name=pStatus][value=${p ? p.status : 'available'}]`).checked = true;
@@ -523,6 +534,7 @@ async function init(){
       name: $('pName').value.trim(),
       weave: $('pWeave').value.trim(),
       price: $('pPrice').value.trim(),
+      category: $('pCat').value,
       images: photos,
       image: photos[0] || '',
       style: chosenStyle,

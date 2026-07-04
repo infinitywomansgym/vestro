@@ -18,6 +18,8 @@ const DEFAULTS = [
   { id:'d4', name:'Marigold Festive',        weave:'Warm ochre · occasion wear',            price:'', style:'marigold',   status:'available' }
 ];
 const STYLE_MAT = { goldtissue:'mat-velvet', saffron:'mat-forest', temple:'mat-velvet', marigold:'mat-forest' };
+const CATS = { saree:'Sarees', modern:'Modern wear', workwear:'Work wear' };
+function catOf(p){ return CATS[p.category] ? p.category : 'saree'; }
 
 /* ---------- load products ---------- */
 function firebaseReady(){
@@ -186,7 +188,7 @@ function updateBar(){
   if(!bar) return;
   if(cart.length === 0){ bar.hidden = true; setPanel(false); return; }
   bar.hidden = false;
-  barCount.textContent = cart.length === 1 ? '1 saree selected' : `${cart.length} sarees selected`;
+  barCount.textContent = cart.length === 1 ? '1 piece selected' : `${cart.length} pieces selected`;
   barSend.href = basketOrderLink(cart);
   renderPanel();
 }
@@ -235,12 +237,42 @@ function cardFor(p, i){
   return card;
 }
 
-grid.textContent = '';
-if(products.length === 0){
-  const empty = el('p','lead','New drop loading — message us on WhatsApp to see what’s in ✨');
-  grid.appendChild(empty);
-}else{
-  products.forEach((p,i)=> grid.appendChild(cardFor(p,i)));
+/* ---------- category filters + grid rendering ---------- */
+const filterRow = document.getElementById('filterRow');
+let activeCat = 'all';
+
+function bindFx(scope){
+  scope.querySelectorAll('.reveal').forEach(n=> io.observe(n));
+  if(finePointer && !reduced){
+    scope.querySelectorAll('[data-tilt]').forEach(attachTilt);
+  }
+}
+
+function renderGrid(){
+  grid.textContent = '';
+  const list = activeCat === 'all' ? products : products.filter(p => catOf(p) === activeCat);
+  if(list.length === 0){
+    grid.appendChild(el('p','lead','New drop loading — message us on WhatsApp to see what’s in ✨'));
+  }else{
+    list.forEach((p,i)=> grid.appendChild(cardFor(p,i)));
+  }
+  bindFx(grid);
+}
+
+function renderFilters(){
+  if(!filterRow) return;
+  const present = [...new Set(products.map(catOf))];
+  if(present.length < 2){ filterRow.hidden = true; return; }
+  filterRow.hidden = false;
+  filterRow.textContent = '';
+  const mk = (val, label)=>{
+    const b = el('button','chip' + (activeCat === val ? ' chip-on' : ''), label);
+    b.type = 'button';
+    b.addEventListener('click', ()=>{ activeCat = val; renderFilters(); renderGrid(); });
+    filterRow.appendChild(b);
+  };
+  mk('all','All');
+  Object.keys(CATS).filter(c => present.includes(c)).forEach(c => mk(c, CATS[c]));
 }
 
 /* ---------- product viewer (click a saree to open) ---------- */
@@ -350,27 +382,28 @@ if(barClear) barClear.addEventListener('click', ()=>{
 });
 updateBar();
 
-/* ---------- reveal + tilt for the freshly rendered cards ---------- */
+/* ---------- reveal + tilt helpers ---------- */
 const io = new IntersectionObserver((entries)=>{
   entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
 },{threshold:.15});
-grid.querySelectorAll('.reveal').forEach(n=> io.observe(n));
 
-if(finePointer && !reduced){
-  grid.querySelectorAll('[data-tilt]').forEach(card=>{
-    const max = 9;
-    card.addEventListener('pointermove', e=>{
-      const r = card.getBoundingClientRect();
-      const px = (e.clientX - r.left)/r.width;
-      const py = (e.clientY - r.top)/r.height;
-      card.style.setProperty('--ry', ((px - .5)*max*2).toFixed(2)+'deg');
-      card.style.setProperty('--rx', ((.5 - py)*max*2).toFixed(2)+'deg');
-      card.style.setProperty('--mx', (px*100).toFixed(1)+'%');
-      card.style.setProperty('--my', (py*100).toFixed(1)+'%');
-    });
-    card.addEventListener('pointerleave', ()=>{
-      card.style.setProperty('--rx','0deg'); card.style.setProperty('--ry','0deg');
-    });
+function attachTilt(card){
+  const max = 9;
+  card.addEventListener('pointermove', e=>{
+    const r = card.getBoundingClientRect();
+    const px = (e.clientX - r.left)/r.width;
+    const py = (e.clientY - r.top)/r.height;
+    card.style.setProperty('--ry', ((px - .5)*max*2).toFixed(2)+'deg');
+    card.style.setProperty('--rx', ((.5 - py)*max*2).toFixed(2)+'deg');
+    card.style.setProperty('--mx', (px*100).toFixed(1)+'%');
+    card.style.setProperty('--my', (py*100).toFixed(1)+'%');
+  });
+  card.addEventListener('pointerleave', ()=>{
+    card.style.setProperty('--rx','0deg'); card.style.setProperty('--ry','0deg');
   });
 }
+
+/* ---------- first paint ---------- */
+renderFilters();
+renderGrid();
 })();
