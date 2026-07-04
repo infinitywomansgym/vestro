@@ -11,8 +11,8 @@ vestro-by-ra/
 ├── script.js          (All JavaScript — interactivity, 3D animations)
 ├── catalog.js         (Live product catalog + WhatsApp order basket)
 ├── admin.html         (Admin portal — add/edit/hide products, mark sold out)
-├── firebase-config.js (Paste your Firebase keys here — see SETUP-FIREBASE.md)
-├── SETUP-FIREBASE.md  (One-time setup guide for the admin portal)
+├── firebase-config.js (Firebase keys + WhatsApp numbers)
+├── logo.png / logo-mark.png (Brand logo and round emblem)
 └── README.md          (This file)
 ```
 
@@ -22,8 +22,7 @@ vestro-by-ra/
   message lists them all automatically) and *Order now* (single item).
 - **Owner:** open `admin.html` and sign in to add products with photos, set prices,
   mark items **Sold out**, or **Hide** them from the site entirely.
-- **Setup:** follow [SETUP-FIREBASE.md](SETUP-FIREBASE.md) once (~10 min, free).
-  Until then the site shows the 4 built-in starter sarees.
+- **Setup:** already connected to Firebase project `vestro-e5637` (free tier).
 
 ## 🚀 How to Use
 

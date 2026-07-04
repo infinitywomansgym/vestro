@@ -1,8 +1,8 @@
 /* ==========================================================================
    VESTRO — FIREBASE CONFIG
-   Paste your own Firebase project config here (see SETUP-FIREBASE.md).
-   Until you do, the site still works and shows the 4 built-in sarees,
-   but the admin portal will ask you to finish the setup.
+   Connected to the Firebase project "vestro-e5637".
+   If these keys are ever replaced, the site falls back to the 4 built-in
+   starter sarees and the admin portal shows setup instructions.
    ========================================================================== */
 window.VESTRO_FIREBASE_CONFIG = {
   apiKey: "AIzaSyBlcVNRMMMhGdvhJ_71m7kYbKbovjLUJ80",
