@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vestro Admin — Manage Products</title>
+<meta name="robots" content="noindex,nofollow" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%234A1119'/%3E%3Ctext x='32' y='44' font-family='Georgia' font-size='36' fill='%23D9B36A' text-anchor='middle'%3EV%3C/text%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --paper:#f7f1e5;--paper-2:#efe6d3;--card:#fcf8ef;--ink:#33241f;--taupe:#77685c;
+  --maroon:#6b1f2a;--maroon-deep:#4a1119;--gold:#b98a3e;--gold-hi:#d9b36a;--gold-text:#8f6a2e;
+  --line:rgba(51,36,31,.16);--display:'Gloock',Georgia,serif;--body:'Jost',system-ui,sans-serif;
+  --ease:cubic-bezier(.22,.75,.25,1);--radius:16px;--wa:#25d366;--ok:#1d7a4c;--warn:#b3541e;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-weight:300;line-height:1.6;min-height:100svh}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+:focus-visible{outline:2px solid var(--maroon);outline-offset:2px;border-radius:4px}
+.wrap{width:min(880px,93vw);margin-inline:auto}
+
+/* top bar */
+.topbar{background:var(--maroon-deep);color:var(--paper);padding:.9rem 0;border-bottom:2px solid rgba(217,179,106,.5)}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.brand{font-family:var(--display);font-size:1.25rem}
+.brand small{font-family:var(--body);font-size:.58rem;letter-spacing:.35em;text-transform:uppercase;color:var(--gold-hi);margin-left:.5rem}
+.top-actions{display:flex;gap:.8rem;align-items:center;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase}
+.top-actions a,.top-actions button{color:rgba(247,241,229,.85);background:none;border:1px solid rgba(217,179,106,.4);border-radius:999px;padding:.42rem .95rem;cursor:pointer;font-family:var(--body);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;transition:background .3s}
+.top-actions a:hover,.top-actions button:hover{background:rgba(217,179,106,.18)}
+
+main{padding:2.4rem 0 5rem}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(1.7rem,4vw,2.3rem);margin-bottom:.4rem}
+.sub{color:var(--taupe);font-size:.95rem;margin-bottom:2rem}
+
+/* generic card panel */
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:1.6rem;box-shadow:0 20px 45px -28px rgba(51,36,31,.3)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;border-radius:999px;cursor:pointer;border:none;font-family:var(--body);font-weight:500;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;padding:.85rem 1.6rem;transition:transform .25s var(--ease),background .3s,box-shadow .3s}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--maroon);color:var(--paper);box-shadow:0 12px 26px -12px rgba(74,17,25,.55)}
+.btn-primary:hover{background:var(--maroon-deep)}
+.btn-ghost{background:none;border:1px solid rgba(107,31,42,.4);color:var(--maroon)}
+.btn-ghost:hover{background:rgba(107,31,42,.06)}
+.btn-danger{background:none;border:1px solid rgba(179,84,30,.5);color:#9a3c14}
+.btn-danger:hover{background:rgba(179,84,30,.08)}
+.btn[disabled]{opacity:.55;cursor:wait}
+
+/* forms */
+label{display:block;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--maroon);margin:1.1rem 0 .35rem;font-weight:500}
+input[type=text],input[type=email],input[type=password],select,textarea{
+  width:100%;background:#fff;border:1px solid var(--line);border-radius:10px;
+  font-family:var(--body);font-size:1rem;font-weight:300;color:var(--ink);padding:.75rem .9rem;
+  transition:border-color .3s;
+}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold)}
+.hint{font-size:.78rem;color:var(--taupe);margin-top:.3rem}
+.form-msg{margin-top:1rem;font-size:.88rem;color:#9a3c14;min-height:1.3em}
+.form-msg.ok{color:var(--ok)}
+
+/* login */
+#loginView{max-width:430px;margin:3.5rem auto 0}
+#loginView .btn{width:100%;margin-top:1.4rem}
+
+/* setup notice */
+.setup{border-left:4px solid var(--gold);background:var(--paper-2);border-radius:0 var(--radius) var(--radius) 0;padding:1.4rem 1.6rem;margin-bottom:2rem}
+.setup h2{font-family:var(--display);font-weight:400;font-size:1.3rem;margin-bottom:.5rem}
+.setup ol{margin:.6rem 0 0 1.2rem;font-size:.92rem}
+.setup li{margin:.3rem 0}
+.setup code{background:rgba(51,36,31,.08);border-radius:5px;padding:.1rem .4rem;font-size:.85em}
+
+/* dashboard */
+.dash-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1.4rem}
+.count-pill{font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:var(--taupe)}
+#list{display:grid;gap:.9rem}
+.row{display:flex;gap:1.1rem;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:.9rem 1.1rem;flex-wrap:wrap}
+.thumb{width:74px;height:74px;border-radius:12px;flex:none;background-size:cover;background-position:center top;border:1px solid var(--line)}
+.t-goldtissue{background:linear-gradient(140deg,#f4e6c6 0%,#e3c88e 42%,#cda760 74%,#b98a3e 100%)}
+.t-saffron{background:linear-gradient(140deg,#fbf6ea 0%,#f2ead6 55%,#e0904c 100%)}
+.t-temple{background:repeating-linear-gradient(90deg,transparent 0 14px,rgba(185,138,62,.4) 14px 15px),linear-gradient(140deg,#f8f1de 0%,#efe2c2 60%,#e0cb9c 100%)}
+.t-marigold{background:linear-gradient(140deg,#eec886 0%,#dfa858 45%,#cd8038 78%,#b96a28 100%)}
+.row-info{flex:1;min-width:180px}
+.row-info h3{font-family:var(--display);font-weight:400;font-size:1.15rem}
+.row-info p{font-size:.82rem;color:var(--taupe)}
+.row-info .p-price{color:var(--gold-text);font-weight:400}
+.row-actions{display:flex;gap:.55rem;align-items:center;flex-wrap:wrap}
+.status-sel{width:auto;font-size:.8rem;padding:.5rem .7rem;border-radius:999px}
+.status-sel.s-available{border-color:rgba(29,122,76,.55);color:var(--ok)}
+.status-sel.s-soldout{border-color:rgba(179,84,30,.55);color:var(--warn)}
+.status-sel.s-hidden{border-color:var(--line);color:var(--taupe)}
+.mini{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;border-radius:999px;padding:.5rem .95rem;cursor:pointer;font-family:var(--body)}
+#emptyState{text-align:center;padding:3rem 1rem;color:var(--taupe)}
+#emptyState .btn{margin-top:1.2rem}
+
+/* dialog / product form */
+dialog{border:none;border-radius:var(--radius);background:var(--card);color:var(--ink);width:min(560px,94vw);padding:0;box-shadow:0 40px 90px -30px rgba(51,36,31,.5)}
+dialog::backdrop{background:rgba(51,36,31,.5);backdrop-filter:blur(3px)}
+.dlg-head{background:var(--maroon-deep);color:var(--paper);padding:1rem 1.6rem;font-family:var(--display);font-size:1.2rem;display:flex;justify-content:space-between;align-items:center}
+.dlg-head button{background:none;border:none;color:rgba(247,241,229,.8);font-size:1.5rem;cursor:pointer;line-height:1}
+.dlg-body{padding:.4rem 1.6rem 1.6rem;max-height:75svh;overflow-y:auto}
+.dlg-actions{display:flex;gap:.8rem;margin-top:1.6rem;flex-wrap:wrap}
+
+/* photo picker */
+.photo-box{display:flex;gap:1rem;align-items:center;flex-wrap:wrap}
+.photo-preview{width:110px;height:110px;border-radius:12px;border:1px dashed rgba(107,31,42,.4);background-size:cover;background-position:center top;display:flex;align-items:center;justify-content:center;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--taupe);text-align:center;flex:none}
+input[type=file]{display:none}
+.file-btn{display:inline-block}
+
+/* colour swatches */
+.swatches{display:flex;gap:.7rem;flex-wrap:wrap}
+.sw{width:52px;height:52px;border-radius:10px;cursor:pointer;border:2px solid transparent;transition:border-color .25s,transform .25s}
+.sw:hover{transform:translateY(-2px)}
+.sw.sel{border-color:var(--maroon);box-shadow:0 0 0 2px var(--paper),0 0 0 4px var(--maroon)}
+
+/* status radios */
+.status-row{display:flex;gap:.6rem;flex-wrap:wrap}
+.status-row input{display:none}
+.status-row span{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:.5rem 1.05rem;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;transition:all .25s}
+.status-row input:checked + span{background:var(--maroon);border-color:var(--maroon);color:var(--paper)}
+
+.hiddenview{display:none!important}
+footer{padding:1.6rem 0;text-align:center;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--taupe)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <span class="brand">Vestro <small>Admin</small></span>
+    <div class="top-actions">
+      <a href="index.html">View site</a>
+      <button id="signOutBtn" class="hiddenview">Sign out</button>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <!-- ===== FIREBASE NOT CONFIGURED ===== -->
+  <section id="setupView" class="hiddenview">
+    <h1>One-time setup needed</h1>
+    <p class="sub">The admin portal saves your products online with Firebase (free). It takes about 10 minutes to connect.</p>
+    <div class="setup">
+      <h2>How to connect</h2>
+      <ol>
+        <li>Open the file <code>SETUP-FIREBASE.md</code> in this folder — it has every step with exact clicks.</li>
+        <li>Create the free Firebase project, enable <strong>Firestore</strong> and <strong>Email/Password login</strong>.</li>
+        <li>Paste your Firebase config into <code>firebase-config.js</code>.</li>
+        <li>Reload this page — the login box will appear.</li>
+      </ol>
+    </div>
+    <p class="sub">Until then, your live site keeps showing the 4 starter sarees, so nothing is broken.</p>
+  </section>
+
+  <!-- ===== LOGIN ===== -->
+  <section id="loginView" class="hiddenview">
+    <div class="panel">
+      <h1>Owner login</h1>
+      <p class="sub">Only you can manage the collection.</p>
+      <form id="loginForm">
+        <label for="email">Email</label>
+        <input type="email" id="email" autocomplete="username" required />
+        <label for="password">Password</label>
+        <input type="password" id="password" autocomplete="current-password" required />
+        <button class="btn btn-primary" type="submit" id="loginBtn">Sign in</button>
+        <p class="form-msg" id="loginMsg"></p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===== DASHBOARD ===== -->
+  <section id="dashView" class="hiddenview">
+    <div class="dash-head">
+      <div>
+        <h1>Your collection</h1>
+        <span class="count-pill" id="countPill"></span>
+      </div>
+      <button class="btn btn-primary" id="addBtn">+ Add product</button>
+    </div>
+    <div id="list"></div>
+    <div id="emptyState" class="hiddenview">
+      <p>No products yet.</p>
+      <button class="btn btn-ghost" id="seedBtn">Load the 4 starter sarees</button>
+    </div>
+  </section>
+</main>
+
+<footer>Vestro by RA · Admin portal</footer>
+
+<!-- ===== ADD / EDIT DIALOG ===== -->
+<dialog id="prodDialog">
+  <div class="dlg-head"><span id="dlgTitle">Add product</span><button type="button" id="dlgClose" aria-label="Close">×</button></div>
+  <div class="dlg-body">
+    <form id="prodForm">
+      <label>Photo (optional — a phone photo is perfect)</label>
+      <div class="photo-box">
+        <div class="photo-preview" id="photoPreview">No photo<br/>yet</div>
+        <div>
+          <label class="btn btn-ghost mini file-btn" for="photoInput">Choose photo</label>
+          <input type="file" id="photoInput" accept="image/*" />
+          <button type="button" class="btn btn-danger mini hiddenview" id="photoRemove">Remove photo</button>
+          <p class="hint">It's resized automatically. No photo? A woven drape design is shown instead.</p>
+        </div>
+      </div>
+
+      <label>Drape colour (used when there's no photo)</label>
+      <div class="swatches" id="swatches">
+        <button type="button" class="sw t-goldtissue sel" data-style="goldtissue" title="Gold tissue"></button>
+        <button type="button" class="sw t-saffron" data-style="saffron" title="Cream & saffron"></button>
+        <button type="button" class="sw t-temple" data-style="temple" title="Ivory temple"></button>
+        <button type="button" class="sw t-marigold" data-style="marigold" title="Marigold"></button>
+      </div>
+
+      <label for="pName">Name *</label>
+      <input type="text" id="pName" required maxlength="60" placeholder="e.g. Rose Gold Kasavu" />
+
+      <label for="pWeave">Short description</label>
+      <input type="text" id="pWeave" maxlength="80" placeholder="e.g. Soft cotton · rose zari border" />
+
+      <label for="pPrice">Price (optional)</label>
+      <input type="text" id="pPrice" maxlength="30" placeholder="e.g. QR 450 — leave empty for 'price on WhatsApp'" />
+
+      <label>Status</label>
+      <div class="status-row">
+        <label><input type="radio" name="pStatus" value="available" checked /><span>Available</span></label>
+        <label><input type="radio" name="pStatus" value="soldout" /><span>Sold out</span></label>
+        <label><input type="radio" name="pStatus" value="hidden" /><span>Hidden</span></label>
+      </div>
+      <p class="hint">Available = customers can order it · Sold out = shown but can't be ordered · Hidden = invisible on the site.</p>
+
+      <div class="dlg-actions">
+        <button class="btn btn-primary" type="submit" id="saveBtn">Save product</button>
+        <button class="btn btn-ghost" type="button" id="cancelBtn">Cancel</button>
+      </div>
+      <p class="form-msg" id="formMsg"></p>
+    </form>
+  </div>
+</dialog>
+
+<script src="firebase-config.js"></script>
+<script type="module">
+/* ==========================================================================
+   VESTRO ADMIN — products live in Firestore, login via Firebase Auth
+   ========================================================================== */
+const $ = id => document.getElementById(id);
+const show = (el, on=true) => el.classList.toggle('hiddenview', !on);
+
+const cfg = window.VESTRO_FIREBASE_CONFIG;
+const configured = cfg && cfg.apiKey && !/^PASTE/.test(cfg.apiKey);
+
+if(!configured){
+  show($('setupView'));
+}else{
+  init().catch(err=>{
+    show($('setupView'));
+    console.error(err);
+  });
+}
+
+async function init(){
+  const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+  const { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } =
+    await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+  const { getFirestore, collection, getDocs, query, orderBy, addDoc, updateDoc, deleteDoc, doc } =
+    await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+
+  const app = initializeApp(cfg);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const col = collection(db,'products');
+
+  /* ---------- auth ---------- */
+  onAuthStateChanged(auth, user=>{
+    show($('loginView'), !user);
+    show($('dashView'), !!user);
+    show($('signOutBtn'), !!user);
+    if(user) refresh();
+  });
+
+  $('loginForm').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const btn = $('loginBtn'), msg = $('loginMsg');
+    btn.disabled = true; msg.textContent = '';
+    try{
+      await signInWithEmailAndPassword(auth, $('email').value.trim(), $('password').value);
+    }catch(err){
+      msg.textContent = friendlyAuthError(err);
+    }
+    btn.disabled = false;
+  });
+  $('signOutBtn').addEventListener('click', ()=> signOut(auth));
+
+  function friendlyAuthError(err){
+    const c = err && err.code || '';
+    if(c.includes('invalid-credential') || c.includes('wrong-password') || c.includes('user-not-found'))
+      return 'Wrong email or password. Try again.';
+    if(c.includes('too-many-requests')) return 'Too many tries — wait a few minutes and try again.';
+    if(c.includes('network')) return 'No internet connection. Check your network and retry.';
+    return 'Could not sign in: ' + (err.message || c);
+  }
+
+  /* ---------- products list ---------- */
+  const STATUS_LABEL = { available:'Available', soldout:'Sold out', hidden:'Hidden' };
+  let products = [];
+
+  async function refresh(){
+    const snap = await getDocs(query(col, orderBy('createdAt','desc')));
+    products = [];
+    snap.forEach(d => products.push({ id:d.id, ...d.data() }));
+    renderList();
+  }
+
+  function renderList(){
+    const list = $('list');
+    list.textContent = '';
+    show($('emptyState'), products.length === 0);
+    const visible = products.filter(p=>p.status!=='hidden').length;
+    $('countPill').textContent = products.length
+      ? `${products.length} product${products.length>1?'s':''} · ${visible} visible on the site`
+      : '';
+    products.forEach(p=>{
+      const row = document.createElement('div'); row.className = 'row';
+
+      const thumb = document.createElement('div');
+      thumb.className = 'thumb' + (p.image ? '' : ' t-' + (p.style || 'goldtissue'));
+      if(p.image) thumb.style.backgroundImage = `url("${p.image}")`;
+      row.appendChild(thumb);
+
+      const info = document.createElement('div'); info.className = 'row-info';
+      const h = document.createElement('h3'); h.textContent = p.name; info.appendChild(h);
+      if(p.weave){ const w = document.createElement('p'); w.textContent = p.weave; info.appendChild(w); }
+      const pr = document.createElement('p'); pr.className = 'p-price';
+      pr.textContent = p.price || 'Price on WhatsApp'; info.appendChild(pr);
+      row.appendChild(info);
+
+      const actions = document.createElement('div'); actions.className = 'row-actions';
+
+      const sel = document.createElement('select');
+      sel.className = 'status-sel s-' + p.status;
+      for(const [val,label] of Object.entries(STATUS_LABEL)){
+        const o = document.createElement('option');
+        o.value = val; o.textContent = label; o.selected = p.status === val;
+        sel.appendChild(o);
+      }
+      sel.addEventListener('change', async ()=>{
+        sel.disabled = true;
+        await updateDoc(doc(db,'products',p.id), { status: sel.value });
+        p.status = sel.value;
+        sel.className = 'status-sel s-' + p.status; sel.disabled = false;
+        renderList();
+      });
+      actions.appendChild(sel);
+
+      const edit = document.createElement('button');
+      edit.className = 'btn btn-ghost mini'; edit.textContent = 'Edit';
+      edit.addEventListener('click', ()=> openDialog(p));
+      actions.appendChild(edit);
+
+      const del = document.createElement('button');
+      del.className = 'btn btn-danger mini'; del.textContent = 'Delete';
+      del.addEventListener('click', async ()=>{
+        if(!confirm(`Delete "${p.name}" forever? (Tip: choose "Hidden" instead if it may come back.)`)) return;
+        del.disabled = true;
+        await deleteDoc(doc(db,'products',p.id));
+        refresh();
+      });
+      actions.appendChild(del);
+
+      row.appendChild(actions);
+      list.appendChild(row);
+    });
+  }
+
+  /* ---------- seed starter products ---------- */
+  $('seedBtn').addEventListener('click', async ()=>{
+    $('seedBtn').disabled = true;
+    const seed = [
+      { name:'Antique Gold Tissue',     weave:'Featherlight tissue · full zari body', style:'goldtissue' },
+      { name:'Kasavu · Saffron Border', weave:'Classic cream · saffron zari edge',    style:'saffron' },
+      { name:'Ivory Temple Zari',       weave:'Soft ivory · fine gold thread lines',  style:'temple' },
+      { name:'Marigold Festive',        weave:'Warm ochre · occasion wear',           style:'marigold' }
+    ];
+    let t = Date.now();
+    for(const s of seed){
+      await addDoc(col, { ...s, price:'', image:'', status:'available', createdAt: t-- });
+    }
+    $('seedBtn').disabled = false;
+    refresh();
+  });
+
+  /* ---------- add / edit dialog ---------- */
+  const dlg = $('prodDialog');
+  let editing = null;      /* product being edited, or null for new */
+  let photoData = '';      /* compressed data-URL or '' */
+  let chosenStyle = 'goldtissue';
+
+  function setPreview(){
+    const pv = $('photoPreview');
+    if(photoData){
+      pv.style.backgroundImage = `url("${photoData}")`;
+      pv.textContent = '';
+      show($('photoRemove'));
+    }else{
+      pv.style.backgroundImage = '';
+      pv.innerHTML = 'No photo<br/>yet';
+      show($('photoRemove'), false);
+    }
+  }
+  function setStyle(style){
+    chosenStyle = style;
+    document.querySelectorAll('#swatches .sw').forEach(s=> s.classList.toggle('sel', s.dataset.style === style));
+  }
+
+  function openDialog(p){
+    editing = p || null;
+    $('dlgTitle').textContent = p ? 'Edit product' : 'Add product';
+    $('pName').value = p ? p.name : '';
+    $('pWeave').value = p ? (p.weave || '') : '';
+    $('pPrice').value = p ? (p.price || '') : '';
+    photoData = p ? (p.image || '') : '';
+    setStyle(p && p.style ? p.style : 'goldtissue');
+    document.querySelector(`input[name=pStatus][value=${p ? p.status : 'available'}]`).checked = true;
+    $('formMsg').textContent = '';
+    setPreview();
+    dlg.showModal();
+  }
+
+  $('addBtn').addEventListener('click', ()=> openDialog(null));
+  $('dlgClose').addEventListener('click', ()=> dlg.close());
+  $('cancelBtn').addEventListener('click', ()=> dlg.close());
+
+  document.querySelectorAll('#swatches .sw').forEach(s=>
+    s.addEventListener('click', ()=> setStyle(s.dataset.style)));
+
+  /* photo: resize + compress so it fits comfortably in Firestore (max ~1MB/doc) */
+  $('photoInput').addEventListener('change', async e=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    $('formMsg').textContent = 'Preparing photo…';
+    try{
+      photoData = await compressImage(file);
+      $('formMsg').textContent = '';
+    }catch(err){
+      $('formMsg').textContent = 'Could not read that photo — try another one.';
+      photoData = '';
+    }
+    setPreview();
+    e.target.value = '';
+  });
+  $('photoRemove').addEventListener('click', ()=>{ photoData = ''; setPreview(); });
+
+  async function compressImage(file, maxSide=900){
+    const bmp = await createImageBitmap(file);
+    const scale = Math.min(1, maxSide / Math.max(bmp.width, bmp.height));
+    const c = document.createElement('canvas');
+    c.width = Math.max(1, Math.round(bmp.width * scale));
+    c.height = Math.max(1, Math.round(bmp.height * scale));
+    c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+    let q = 0.78, data = c.toDataURL('image/jpeg', q);
+    while(data.length > 450000 && q > 0.35){
+      q -= 0.1;
+      data = c.toDataURL('image/jpeg', q);
+    }
+    if(data.length > 900000) throw new Error('image too large');
+    return data;
+  }
+
+  $('prodForm').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const btn = $('saveBtn'), msg = $('formMsg');
+    const payload = {
+      name: $('pName').value.trim(),
+      weave: $('pWeave').value.trim(),
+      price: $('pPrice').value.trim(),
+      image: photoData,
+      style: chosenStyle,
+      status: document.querySelector('input[name=pStatus]:checked').value
+    };
+    if(!payload.name){ msg.textContent = 'Give the product a name.'; return; }
+    btn.disabled = true; msg.textContent = 'Saving…';
+    try{
+      if(editing){
+        await updateDoc(doc(db,'products',editing.id), payload);
+      }else{
+        await addDoc(col, { ...payload, createdAt: Date.now() });
+      }
+      msg.classList.add('ok'); msg.textContent = 'Saved ✓';
+      setTimeout(()=>{ msg.classList.remove('ok'); dlg.close(); }, 450);
+      refresh();
+    }catch(err){
+      msg.textContent = 'Could not save: ' + (err.message || err);
+    }
+    btn.disabled = false;
+  });
+}
+</script>
+</body>
+</html>
