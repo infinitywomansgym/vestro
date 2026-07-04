@@ -96,10 +96,16 @@ function el(tag, cls, text){
   return n;
 }
 
+function imagesOf(p){
+  if(p.images && p.images.length) return p.images;
+  return p.image ? [p.image] : [];
+}
+
 function drapeFor(p){
-  if(p.image){
+  const cover = imagesOf(p)[0];
+  if(cover){
     const d = el('div','drape drape-photo');
-    d.style.backgroundImage = `url("${p.image.replace(/"/g,'%22')}")`;
+    d.style.backgroundImage = `url("${cover.replace(/"/g,'%22')}")`;
     return d;
   }
   const style = STYLE_MAT[p.style] ? p.style : 'goldtissue';
@@ -151,7 +157,8 @@ function renderPanel(){
     const p = products.find(x => x.id === c.id) || {};
     const row = el('div','cart-item');
     const thumb = el('div','cart-item-thumb');
-    if(p.image){ thumb.style.backgroundImage = `url("${p.image.replace(/"/g,'%22')}")`; }
+    const cover = imagesOf(p)[0];
+    if(cover){ thumb.style.backgroundImage = `url("${cover.replace(/"/g,'%22')}")`; }
     else{ thumb.style.background = THUMB_GRAD[p.style] || THUMB_GRAD.goldtissue; }
     row.appendChild(thumb);
     const info = el('div','cart-item-info');
@@ -192,6 +199,12 @@ function cardFor(p, i){
   const inner = el('div','card-inner');
   const drape = drapeFor(p);
   if(p.status === 'soldout') drape.appendChild(el('span','sold-badge','Sold out'));
+  drape.classList.add('drape-click');
+  drape.setAttribute('role','button');
+  drape.setAttribute('tabindex','0');
+  drape.setAttribute('aria-label', `View ${p.name}`);
+  drape.addEventListener('click', ()=> openViewer(p));
+  drape.addEventListener('keydown', e=>{ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openViewer(p); } });
   inner.appendChild(drape);
   inner.appendChild(el('h3', null, p.name));
   if(p.weave) inner.appendChild(el('p','weave', p.weave));
@@ -228,6 +241,105 @@ if(products.length === 0){
   grid.appendChild(empty);
 }else{
   products.forEach((p,i)=> grid.appendChild(cardFor(p,i)));
+}
+
+/* ---------- product viewer (click a saree to open) ---------- */
+const pmBackdrop = document.getElementById('pmBackdrop');
+const pmImg   = document.getElementById('pmImg');
+const pmCount = document.getElementById('pmCount');
+const pmDots  = document.getElementById('pmDots');
+const pmName  = document.getElementById('pmName');
+const pmWeave = document.getElementById('pmWeave');
+const pmPrice = document.getElementById('pmPrice');
+const pmAdd   = document.getElementById('pmAdd');
+const pmBuy   = document.getElementById('pmBuy');
+const pmSold  = document.getElementById('pmSold');
+
+let pmProduct = null, pmIndex = 0, pmImages = [];
+
+function pmRender(){
+  const many = pmImages.length > 1;
+  if(pmImages.length){
+    pmImg.style.background = '';
+    pmImg.style.backgroundImage = `url("${pmImages[pmIndex].replace(/"/g,'%22')}")`;
+  }else{
+    pmImg.style.backgroundImage = '';
+    pmImg.style.background = THUMB_GRAD[pmProduct.style] || THUMB_GRAD.goldtissue;
+  }
+  document.getElementById('pmPrev').hidden = !many;
+  document.getElementById('pmNext').hidden = !many;
+  pmCount.hidden = !many;
+  pmCount.textContent = `${pmIndex + 1} / ${pmImages.length}`;
+  pmDots.textContent = '';
+  if(many){
+    pmImages.forEach((_, i)=>{
+      const d = el('i', i === pmIndex ? 'on' : null);
+      d.addEventListener('click', ()=>{ pmIndex = i; pmRender(); });
+      pmDots.appendChild(d);
+    });
+  }
+}
+
+function pmSyncAdd(){
+  if(!pmProduct) return;
+  const added = inCart(pmProduct);
+  pmAdd.textContent = added ? 'Added ✓' : 'Add to order';
+  pmAdd.classList.toggle('chip-added', added);
+}
+
+function openViewer(p){
+  pmProduct = p; pmImages = imagesOf(p); pmIndex = 0;
+  pmName.textContent = p.name;
+  pmWeave.textContent = p.weave || ''; pmWeave.hidden = !p.weave;
+  pmPrice.textContent = p.price || ''; pmPrice.hidden = !p.price;
+  const sold = p.status === 'soldout';
+  pmAdd.hidden = sold; pmBuy.hidden = sold; pmSold.hidden = !sold;
+  pmBuy.href = singleOrderLink(p);
+  pmSyncAdd();
+  pmRender();
+  pmBackdrop.hidden = false;
+  document.body.style.overflow = 'hidden';
+}
+
+function closeViewer(){
+  pmBackdrop.hidden = true;
+  document.body.style.overflow = '';
+  pmProduct = null;
+}
+
+function pmStep(d){
+  if(pmImages.length < 2) return;
+  pmIndex = (pmIndex + d + pmImages.length) % pmImages.length;
+  pmRender();
+}
+
+if(pmBackdrop){
+  document.getElementById('pmClose').addEventListener('click', closeViewer);
+  document.getElementById('pmPrev').addEventListener('click', ()=> pmStep(-1));
+  document.getElementById('pmNext').addEventListener('click', ()=> pmStep(1));
+  pmBackdrop.addEventListener('click', e=>{ if(e.target === pmBackdrop) closeViewer(); });
+  document.addEventListener('keydown', e=>{
+    if(pmBackdrop.hidden) return;
+    if(e.key === 'Escape') closeViewer();
+    if(e.key === 'ArrowLeft') pmStep(-1);
+    if(e.key === 'ArrowRight') pmStep(1);
+  });
+  /* swipe between photos on touch screens */
+  let touchX = null;
+  pmImg.addEventListener('touchstart', e=>{ touchX = e.touches[0].clientX; }, {passive:true});
+  pmImg.addEventListener('touchend', e=>{
+    if(touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if(Math.abs(dx) > 45) pmStep(dx < 0 ? 1 : -1);
+    touchX = null;
+  }, {passive:true});
+  pmAdd.addEventListener('click', ()=>{
+    if(!pmProduct) return;
+    const gridBtn = grid.querySelector(`.chip-add[data-id="${CSS.escape(pmProduct.id)}"]`);
+    if(gridBtn){ gridBtn.click(); }
+    else{ toggleCart(pmProduct, pmAdd); }
+    pmSyncAdd();
+  });
 }
 
 /* basket bar events */

@@ -22,6 +22,7 @@
   --wa:#25d366;
 }
 *{margin:0;padding:0;box-sizing:border-box}
+[hidden]{display:none!important}
 html{scroll-behavior:smooth}
 body{
   background:var(--paper);
@@ -304,6 +305,54 @@ h2{font-size:clamp(2.2rem,4.6vw,3.6rem);margin:.9rem 0 1.1rem}
   .cart-send .on-wa{display:none}
   .cart-panel{width:100%}
 }
+
+/* ============ PRODUCT VIEWER (click a saree to open) ============ */
+.drape-click{cursor:pointer}
+.pm-backdrop{
+  position:fixed;inset:0;z-index:80;
+  background:rgba(51,36,31,.55);backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;padding:1rem;
+}
+.pm{
+  position:relative;width:min(520px,94vw);max-height:92svh;overflow-y:auto;
+  background:var(--card);border:1px solid rgba(185,138,62,.5);border-radius:22px;
+  box-shadow:0 40px 90px -30px rgba(0,0,0,.6);
+  animation:cart-in .3s var(--ease);
+}
+.pm-close{
+  position:absolute;top:.75rem;right:.75rem;z-index:3;width:36px;height:36px;border-radius:50%;
+  background:rgba(252,248,239,.92);border:1px solid var(--line);color:var(--maroon);
+  font-size:1.3rem;line-height:1;cursor:pointer;transition:background .25s;
+}
+.pm-close:hover{background:var(--maroon);color:var(--paper)}
+.pm-stage{position:relative}
+.pm-img{
+  height:min(56svh,500px);border-radius:21px 21px 0 0;
+  background-size:cover;background-position:center top;
+}
+.pm-nav{
+  position:absolute;top:50%;transform:translateY(-50%);z-index:2;
+  width:42px;height:42px;border-radius:50%;cursor:pointer;
+  background:rgba(252,248,239,.92);border:1px solid var(--line);color:var(--maroon);
+  font-size:1.55rem;line-height:1;padding:0 0 4px;transition:background .25s,color .25s;
+}
+.pm-nav:hover{background:var(--maroon);color:var(--paper)}
+.pm-prev{left:.75rem}
+.pm-next{right:.75rem}
+.pm-count{
+  position:absolute;bottom:.75rem;right:.9rem;z-index:2;
+  background:rgba(74,17,25,.82);color:var(--paper);
+  font-size:.66rem;letter-spacing:.18em;border-radius:999px;padding:.28rem .75rem;
+}
+.pm-info{padding:1.1rem 1.5rem 1.5rem}
+.pm-dots{display:flex;gap:.5rem;justify-content:center;margin-bottom:.8rem}
+.pm-dots i{width:7px;height:7px;border-radius:50%;background:rgba(107,31,42,.22);cursor:pointer;transition:background .25s}
+.pm-dots i.on{background:var(--maroon)}
+.pm-info h3{font-family:var(--display);font-weight:400;font-size:1.55rem;letter-spacing:.01em}
+.pm-info .weave{margin-top:.15rem}
+.pm-info .price{font-size:1.15rem;margin-top:.4rem}
+.pm-actions{display:flex;gap:.7rem;margin-top:1.1rem;flex-wrap:wrap}
+.pm-actions .chip{font-size:.72rem;padding:.55rem 1.1rem}
 
 /* ============ GIFT / ROUTE ============ */
 .gift{background:linear-gradient(180deg,var(--paper) 0%,var(--paper-2) 50%,var(--paper) 100%)}

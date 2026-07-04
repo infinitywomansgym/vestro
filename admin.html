@@ -114,8 +114,19 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold)}
 }
 
 /* photo picker */
-.photo-box{display:flex;gap:1rem;align-items:center;flex-wrap:wrap}
-.photo-preview{width:110px;height:110px;border-radius:12px;border:1px dashed rgba(107,31,42,.4);background-size:cover;background-position:center top;display:flex;align-items:center;justify-content:center;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--taupe);text-align:center;flex:none}
+.gallery{display:flex;gap:.9rem;flex-wrap:wrap;margin-bottom:.8rem;min-height:20px}
+.g-item{position:relative;width:88px;height:88px;border-radius:12px;background-size:cover;background-position:center top;border:1px solid var(--line);flex:none}
+.g-item .g-x{
+  position:absolute;top:-9px;right:-9px;width:24px;height:24px;border-radius:50%;
+  background:var(--maroon);color:#fff;border:2px solid var(--card);cursor:pointer;
+  font-size:.85rem;line-height:1;padding:0;
+}
+.g-item.cover::after{
+  content:"cover";position:absolute;left:0;right:0;bottom:0;
+  font-size:.52rem;letter-spacing:.18em;text-transform:uppercase;text-align:center;
+  background:rgba(74,17,25,.85);color:#fff;padding:2px 0;border-radius:0 0 11px 11px;
+}
+.g-empty{font-size:.82rem;color:var(--taupe)}
 input[type=file]{display:none}
 .file-btn{display:inline-block}
 
@@ -202,16 +213,11 @@ footer{padding:1.6rem 0;text-align:center;font-size:.72rem;letter-spacing:.16em;
   <h1 id="dlgTitle">Add product</h1>
   <div class="panel form-panel">
     <form id="prodForm">
-      <label>Photo (optional — a phone photo is perfect)</label>
-      <div class="photo-box">
-        <div class="photo-preview" id="photoPreview">No photo<br/>yet</div>
-        <div>
-          <label class="btn btn-ghost mini file-btn" for="photoInput">Choose photo</label>
-          <input type="file" id="photoInput" accept="image/*" />
-          <button type="button" class="btn btn-danger mini hiddenview" id="photoRemove">Remove photo</button>
-          <p class="hint">It's resized automatically. No photo? A woven drape design is shown instead.</p>
-        </div>
-      </div>
+      <label>Photos (optional — up to 4, the first one is the cover)</label>
+      <div class="gallery" id="photoGallery"></div>
+      <label class="btn btn-ghost mini file-btn" for="photoInput">+ Add photos</label>
+      <input type="file" id="photoInput" accept="image/*" multiple />
+      <p class="hint">Resized automatically. Customers can flip through them on the site. No photo? A woven drape design is shown instead.</p>
 
       <label>Drape colour (used when there's no photo)</label>
       <div class="swatches" id="swatches">
@@ -334,9 +340,10 @@ async function init(){
     products.forEach(p=>{
       const row = document.createElement('div'); row.className = 'row';
 
+      const cover = (p.images && p.images[0]) || p.image || '';
       const thumb = document.createElement('div');
-      thumb.className = 'thumb' + (p.image ? '' : ' t-' + (p.style || 'goldtissue'));
-      if(p.image) thumb.style.backgroundImage = `url("${p.image}")`;
+      thumb.className = 'thumb' + (cover ? '' : ' t-' + (p.style || 'goldtissue'));
+      if(cover) thumb.style.backgroundImage = `url("${cover}")`;
       row.appendChild(thumb);
 
       const info = document.createElement('div'); info.className = 'row-info';
@@ -402,21 +409,31 @@ async function init(){
   });
 
   /* ---------- add / edit page ---------- */
+  const MAX_PHOTOS = 4;
   let editing = null;      /* product being edited, or null for new */
-  let photoData = '';      /* compressed data-URL or '' */
+  let photos = [];         /* compressed data-URLs, first = cover */
   let chosenStyle = 'goldtissue';
 
-  function setPreview(){
-    const pv = $('photoPreview');
-    if(photoData){
-      pv.style.backgroundImage = `url("${photoData}")`;
-      pv.textContent = '';
-      show($('photoRemove'));
-    }else{
-      pv.style.backgroundImage = '';
-      pv.innerHTML = 'No photo<br/>yet';
-      show($('photoRemove'), false);
+  function renderGallery(){
+    const g = $('photoGallery');
+    g.textContent = '';
+    if(photos.length === 0){
+      const e = document.createElement('p');
+      e.className = 'g-empty'; e.textContent = 'No photos yet.';
+      g.appendChild(e);
+      return;
     }
+    photos.forEach((src, i)=>{
+      const d = document.createElement('div');
+      d.className = 'g-item' + (i === 0 ? ' cover' : '');
+      d.style.backgroundImage = `url("${src}")`;
+      const x = document.createElement('button');
+      x.type = 'button'; x.className = 'g-x'; x.textContent = '×';
+      x.setAttribute('aria-label','Remove photo');
+      x.addEventListener('click', ()=>{ photos.splice(i,1); renderGallery(); });
+      d.appendChild(x);
+      g.appendChild(d);
+    });
   }
   function setStyle(style){
     chosenStyle = style;
@@ -429,11 +446,11 @@ async function init(){
     $('pName').value = p ? p.name : '';
     $('pWeave').value = p ? (p.weave || '') : '';
     $('pPrice').value = p ? (p.price || '') : '';
-    photoData = p ? (p.image || '') : '';
+    photos = p ? (p.images && p.images.length ? [...p.images] : (p.image ? [p.image] : [])) : [];
     setStyle(p && p.style ? p.style : 'goldtissue');
     document.querySelector(`input[name=pStatus][value=${p ? p.status : 'available'}]`).checked = true;
     $('formMsg').textContent = '';
-    setPreview();
+    renderGallery();
     show($('dashView'), false);
     show($('formView'));
     window.scrollTo({ top: 0 });
@@ -451,22 +468,23 @@ async function init(){
   document.querySelectorAll('#swatches .sw').forEach(s=>
     s.addEventListener('click', ()=> setStyle(s.dataset.style)));
 
-  /* photo: resize + compress so it fits comfortably in Firestore (max ~1MB/doc) */
+  /* photos: resize + compress so they all fit in one Firestore doc (max ~1MB) */
   $('photoInput').addEventListener('change', async e=>{
-    const file = e.target.files[0];
-    if(!file) return;
-    $('formMsg').textContent = 'Preparing photo…';
-    try{
-      photoData = await compressImage(file);
-      $('formMsg').textContent = '';
-    }catch(err){
-      $('formMsg').textContent = 'Could not read that photo — try another one.';
-      photoData = '';
-    }
-    setPreview();
+    const files = Array.from(e.target.files || []);
     e.target.value = '';
+    if(!files.length) return;
+    const room = MAX_PHOTOS - photos.length;
+    if(room <= 0){ $('formMsg').textContent = `Maximum ${MAX_PHOTOS} photos per product — remove one first.`; return; }
+    $('formMsg').textContent = 'Preparing photos…';
+    let failed = 0;
+    for(const file of files.slice(0, room)){
+      try{ photos.push(await compressImage(file)); }
+      catch(err){ failed++; }
+    }
+    $('formMsg').textContent = failed ? `${failed} photo(s) could not be read — try different ones.` :
+      (files.length > room ? `Only ${MAX_PHOTOS} photos allowed — extra ones were skipped.` : '');
+    renderGallery();
   });
-  $('photoRemove').addEventListener('click', ()=>{ photoData = ''; setPreview(); });
 
   async function loadBitmap(file){
     if(window.createImageBitmap){
@@ -490,11 +508,11 @@ async function init(){
     c.height = Math.max(1, Math.round(bmp.height * scale));
     c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
     let q = 0.78, data = c.toDataURL('image/jpeg', q);
-    while(data.length > 450000 && q > 0.35){
+    while(data.length > 200000 && q > 0.35){
       q -= 0.1;
       data = c.toDataURL('image/jpeg', q);
     }
-    if(data.length > 900000) throw new Error('image too large');
+    if(data.length > 450000) throw new Error('image too large');
     return data;
   }
 
@@ -505,11 +523,16 @@ async function init(){
       name: $('pName').value.trim(),
       weave: $('pWeave').value.trim(),
       price: $('pPrice').value.trim(),
-      image: photoData,
+      images: photos,
+      image: photos[0] || '',
       style: chosenStyle,
       status: document.querySelector('input[name=pStatus]:checked').value
     };
     if(!payload.name){ msg.textContent = 'Give the product a name.'; return; }
+    if(photos.reduce((s,p)=> s + p.length, 0) > 900000){
+      msg.textContent = 'These photos are too heavy together — remove one and try again.';
+      return;
+    }
     btn.disabled = true; msg.textContent = 'Saving…';
     try{
       if(editing){
