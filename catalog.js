@@ -56,8 +56,18 @@ function singleOrderLink(p){
   const msg = `Hi Vestro by RA! I'd like to order the *${p.name}*${price} ✨\nPlease confirm availability & delivery.`;
   return `https://wa.me/${WA}?text=${encodeURIComponent(msg)}`;
 }
+/* always use the latest name/price from the loaded products, not what
+   was stored when the customer first tapped "Add to order" */
+function liveItem(c){
+  const p = products.find(x => x.id === c.id);
+  return p ? { name: p.name, price: p.price || '' } : { name: c.name, price: c.price || '' };
+}
+
 function basketOrderLink(items){
-  const lines = items.map((p,i)=> `${i+1}. ${p.name}${p.price ? ' — '+p.price : ''}`);
+  const lines = items.map((c,i)=>{
+    const t = liveItem(c);
+    return `${i+1}. ${t.name}${t.price ? ' — '+t.price : ''}`;
+  });
   const msg = `Hi Vestro by RA! ✨ I'd like to order these:\n\n${lines.join('\n')}\n\nTotal pieces: ${items.length}\nPlease confirm availability, price & delivery.`;
   return `https://wa.me/${WA}?text=${encodeURIComponent(msg)}`;
 }
@@ -145,8 +155,9 @@ function renderPanel(){
     else{ thumb.style.background = THUMB_GRAD[p.style] || THUMB_GRAD.goldtissue; }
     row.appendChild(thumb);
     const info = el('div','cart-item-info');
-    info.appendChild(el('h4', null, c.name));
-    info.appendChild(el('p', null, c.price || 'Price on WhatsApp'));
+    const t = liveItem(c);
+    info.appendChild(el('h4', null, t.name));
+    if(t.price) info.appendChild(el('p', null, t.price));
     row.appendChild(info);
     const x = el('button','cart-item-x','×');
     x.type = 'button';
