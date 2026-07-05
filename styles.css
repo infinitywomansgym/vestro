@@ -440,3 +440,14 @@ footer{
   .reveal{opacity:1;transform:none;transition:none}
   .card{transition:none}
 }
+
+/* ============ INSTAGRAM FEED (LightWidget embed) ============ */
+#instagram .ig-feed{
+  margin-top:2.4rem;
+  border-radius:var(--radius);
+  overflow:hidden;
+  background:var(--card,#fcf8ef);
+  border:1px solid var(--line,rgba(51,36,31,.14));
+  box-shadow:0 24px 60px -34px rgba(51,36,31,.4);
+}
+#instagram .ig-feed iframe{display:block}
