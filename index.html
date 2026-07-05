@@ -33,6 +33,7 @@
     </a>
     <div class="nav-links">
       <a href="#collection">Collection</a>
+      <a href="#instagram">Instagram</a>
       <a href="#gift">Delivery</a>
       <a href="#why">Why Vestro</a>
       <a class="nav-cta" href="https://wa.me/97466194953?text=Hi%20Vestro%20by%20RA!%20I%27d%20like%20to%20place%20an%20order%20%E2%9C%A8" target="_blank" rel="noopener">Order on WhatsApp</a>
@@ -105,8 +106,8 @@
   </div>
 </section>
 
-<!-- ================= INSTAGRAM FEED (hidden until HTTPS-capable feed is set) ================= -->
-<section class="section" id="instagram" hidden>
+<!-- ================= INSTAGRAM FEED ================= -->
+<section class="section" id="instagram">
   <span class="ml-mark" aria-hidden="true">latest</span>
   <div class="wrap">
     <p class="eyebrow reveal">Straight from the studio</p>
@@ -116,9 +117,14 @@
       then message us on WhatsApp to order.
     </p>
     <div class="ig-feed reveal" style="transition-delay:.24s">
-      <!-- LightWidget WIDGET -->
-      <script src="https://cdn.lightwidget.com/widgets/lightwidget.js"></script>
-      <iframe src="https://lightwidget.com/widgets/ef6be6f2670154ee8c1c823b5d785c27.html" scrolling="no" allowtransparency="true" class="lightwidget-widget" style="width:100%;border:0;overflow:hidden;"></iframe>
+      <!-- Behold Instagram feed (@vestro_by_ra) -->
+      <behold-widget feed-id="9GCk6ir7QmacVYVJ0ZZN"></behold-widget>
+      <script>
+        (() => {
+          const d=document,s=d.createElement("script");s.type="module";
+          s.src="https://w.behold.so/widget.js";d.head.append(s);
+        })();
+      </script>
     </div>
     <div class="cta-row reveal" style="justify-content:center;margin-top:2.2rem;transition-delay:.3s">
       <a class="btn btn-outline" href="https://instagram.com/vestro_by_ra" target="_blank" rel="noopener">Follow @vestro_by_ra</a>
