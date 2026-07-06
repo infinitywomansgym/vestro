@@ -443,13 +443,18 @@ footer{
   .card{transition:none}
 }
 
-/* ============ INSTAGRAM FEED (LightWidget embed) ============ */
-#instagram .ig-feed{
-  margin-top:2.4rem;
-  border-radius:var(--radius);
-  overflow:hidden;
-  background:var(--card,#fcf8ef);
-  border:1px solid var(--line,rgba(51,36,31,.14));
-  box-shadow:0 24px 60px -34px rgba(51,36,31,.4);
+/* ============ INSTAGRAM FEED ============ */
+#instagram .ig-feed{margin-top:2.4rem}
+.ig-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:900px;margin:0 auto}
+.ig-grid a{
+  position:relative;display:block;aspect-ratio:1/1;overflow:hidden;
+  border-radius:14px;border:1px solid var(--line,rgba(51,36,31,.14));
+  background:var(--card,#fcf8ef);box-shadow:0 14px 30px -20px rgba(51,36,31,.35);
 }
-#instagram .ig-feed iframe{display:block}
+.ig-grid img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s var(--ease,ease)}
+.ig-grid a:hover img{transform:scale(1.06)}
+.ig-type{position:absolute;top:10px;right:10px;width:20px;height:20px;color:#fff;filter:drop-shadow(0 1px 4px rgba(0,0,0,.5));pointer-events:none}
+.ig-type svg{width:100%;height:100%;display:block}
+.ig-fallback{grid-column:1/-1;text-align:center;padding:2rem 1rem}
+.ig-fallback a{color:var(--maroon);border-bottom:1px solid rgba(185,138,62,.55)}
+@media(max-width:640px){.ig-grid{gap:8px}.ig-grid a{border-radius:10px}}

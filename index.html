@@ -117,12 +117,66 @@
       then message us on WhatsApp to order.
     </p>
     <div class="ig-feed reveal" style="transition-delay:.24s">
-      <!-- Behold Instagram feed (@vestro_by_ra) -->
-      <behold-widget feed-id="9GCk6ir7QmacVYVJ0ZZN"></behold-widget>
+      <!-- Instagram feed (@vestro_by_ra) — rendered from the Behold data feed -->
+      <div class="ig-grid" id="igGrid" aria-label="Latest Instagram posts"></div>
       <script>
         (() => {
-          const d=document,s=d.createElement("script");s.type="module";
-          s.src="https://w.behold.so/widget.js";d.head.append(s);
+          const grid = document.getElementById("igGrid");
+          const NS = "http://www.w3.org/2000/svg";
+          const svgEl = (tag, attrs) => {
+            const el = document.createElementNS(NS, tag);
+            for (const k in attrs) el.setAttribute(k, attrs[k]);
+            return el;
+          };
+          const makeIcon = (type) => {
+            if (type === "VIDEO") {
+              const svg = svgEl("svg", { viewBox: "0 0 24 24", fill: "currentColor" });
+              svg.append(svgEl("path", { d: "M8 5.5v13l11-6.5z" }));
+              return svg;
+            }
+            if (type === "CAROUSEL_ALBUM") {
+              const svg = svgEl("svg", { viewBox: "0 0 24 24", fill: "currentColor" });
+              svg.append(svgEl("path", { d: "M8 4h10a2 2 0 0 1 2 2v10h-2V6H8z" }));
+              svg.append(svgEl("rect", { x: "4", y: "8", width: "12", height: "12", rx: "2" }));
+              return svg;
+            }
+            return null;
+          };
+          fetch("https://feeds.behold.so/9GCk6ir7QmacVYVJ0ZZN")
+            .then(r => r.json())
+            .then(data => {
+              (data.posts || []).forEach(p => {
+                const a = document.createElement("a");
+                a.href = p.permalink;
+                a.target = "_blank";
+                a.rel = "noopener";
+                const img = document.createElement("img");
+                img.src = (p.sizes && p.sizes.medium) ? p.sizes.medium.mediaUrl : p.mediaUrl;
+                img.alt = "Instagram post by @vestro_by_ra";
+                img.loading = "lazy";
+                a.append(img);
+                const icon = makeIcon(p.mediaType);
+                if (icon) {
+                  const badge = document.createElement("span");
+                  badge.className = "ig-type";
+                  badge.append(icon);
+                  a.append(badge);
+                }
+                grid.append(a);
+              });
+            })
+            .catch(() => {
+              const msg = document.createElement("p");
+              msg.className = "ig-fallback";
+              msg.append("See our latest pieces on ");
+              const link = document.createElement("a");
+              link.href = "https://instagram.com/vestro_by_ra";
+              link.target = "_blank";
+              link.rel = "noopener";
+              link.textContent = "Instagram →";
+              msg.append(link);
+              grid.append(msg);
+            });
         })();
       </script>
     </div>
