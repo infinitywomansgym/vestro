@@ -1,6 +1,6 @@
 # Vestro by RA — Unlock Your Era
 
-Handpicked kasavu & festive saree boutique. Doha ⇄ Kerala · free delivery · cash on delivery.
+Handpicked kasavu & festive saree boutique. Doha, Qatar · free delivery · cash on delivery.
 
 **Live shop:** https://infinitywomansgym.github.io/vestro/
 **Admin portal:** https://infinitywomansgym.github.io/vestro/admin
