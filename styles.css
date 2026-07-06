@@ -399,10 +399,7 @@ h2{font-size:clamp(2.2rem,4.6vw,3.6rem);margin:.9rem 0 1.1rem}
 }
 .order .divider{justify-content:center}
 .order-logo{
-  width:min(190px,50vw);margin:0 auto 1.8rem;display:block;
-  background:#fff;padding:10px;border-radius:22px;
-  border:1px solid rgba(185,138,62,.45);
-  box-shadow:0 22px 48px -20px rgba(51,36,31,.3);
+  width:min(210px,55vw);margin:0 auto 1.8rem;display:block;
 }
 .order h2{font-size:clamp(2.4rem,5.5vw,4.2rem)}
 .order .lead{margin:1rem auto 2.6rem}
