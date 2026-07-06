@@ -103,6 +103,25 @@ function imagesOf(p){
   return p.image ? [p.image] : [];
 }
 
+/* pull the number out of a price like "QR 450" so we can compute % off */
+function priceNum(s){
+  const m = String(s || '').replace(/[,\s]/g,'').match(/(\d+(?:\.\d+)?)/);
+  return m ? parseFloat(m[1]) : null;
+}
+function percentOff(p){
+  const now = priceNum(p.price), was = priceNum(p.oldPrice);
+  if(now == null || was == null || was <= now) return null;
+  const pct = Math.round((was - now) / was * 100);
+  return (pct >= 1 && pct <= 90) ? pct : null;
+}
+
+/* the 2 most recently added pieces get a "New" tag (live products only) */
+const newIds = new Set(
+  products.length > 3
+    ? products.filter(p => p.createdAt).slice(0, 2).map(p => p.id)
+    : []
+);
+
 function drapeFor(p){
   const cover = imagesOf(p)[0];
   if(cover){
@@ -200,7 +219,13 @@ function cardFor(p, i){
 
   const inner = el('div','card-inner');
   const drape = drapeFor(p);
-  if(p.status === 'soldout') drape.appendChild(el('span','sold-badge','Sold out'));
+  if(p.status === 'soldout'){
+    drape.appendChild(el('span','sold-badge','Sold out'));
+  }else{
+    const pct = percentOff(p);
+    if(pct) drape.appendChild(el('span','off-badge', `${pct}% off`));
+    if(newIds.has(p.id)) drape.appendChild(el('span','new-badge','New'));
+  }
   drape.classList.add('drape-click');
   drape.setAttribute('role','button');
   drape.setAttribute('tabindex','0');
@@ -210,7 +235,14 @@ function cardFor(p, i){
   inner.appendChild(drape);
   inner.appendChild(el('h3', null, p.name));
   if(p.weave) inner.appendChild(el('p','weave', p.weave));
-  if(p.price) inner.appendChild(el('p','price', p.price));
+  if(p.price){
+    const priceEl = el('p','price', p.price);
+    if(p.oldPrice && percentOff(p)){
+      const was = el('s','price-old', p.oldPrice);
+      priceEl.append(' ', was);
+    }
+    inner.appendChild(priceEl);
+  }
 
   const foot = el('div','card-foot');
   if(p.status === 'soldout'){
@@ -239,7 +271,35 @@ function cardFor(p, i){
 
 /* ---------- category filters + grid rendering ---------- */
 const filterRow = document.getElementById('filterRow');
+const catRow = document.getElementById('catRow');
 let activeCat = 'all';
+
+function setCat(val){
+  activeCat = val;
+  renderCats(); renderFilters(); renderGrid();
+}
+
+/* shop-by-category circles (Laly's-style), built from the live products */
+function renderCats(){
+  if(!catRow) return;
+  const present = [...new Set(products.map(catOf))];
+  if(present.length < 2){ catRow.hidden = true; return; }
+  catRow.hidden = false;
+  catRow.textContent = '';
+  Object.keys(CATS).filter(c => present.includes(c)).forEach(c=>{
+    const items = products.filter(p => catOf(p) === c);
+    const b = el('button','cat-circle' + (activeCat === c ? ' cat-on' : ''));
+    b.type = 'button';
+    const img = el('span','cat-img');
+    const cover = items.map(p => imagesOf(p)[0]).find(Boolean);
+    if(cover) img.style.backgroundImage = `url("${cover.replace(/"/g,'%22')}")`;
+    b.appendChild(img);
+    b.appendChild(el('b', null, CATS[c]));
+    b.appendChild(el('small', null, items.length === 1 ? '1 piece' : `${items.length} pieces`));
+    b.addEventListener('click', ()=> setCat(activeCat === c ? 'all' : c));
+    catRow.appendChild(b);
+  });
+}
 
 function bindFx(scope){
   scope.querySelectorAll('.reveal').forEach(n=> io.observe(n));
@@ -268,7 +328,7 @@ function renderFilters(){
   const mk = (val, label)=>{
     const b = el('button','chip' + (activeCat === val ? ' chip-on' : ''), label);
     b.type = 'button';
-    b.addEventListener('click', ()=>{ activeCat = val; renderFilters(); renderGrid(); });
+    b.addEventListener('click', ()=> setCat(val));
     filterRow.appendChild(b);
   };
   mk('all','All');
@@ -324,6 +384,10 @@ function openViewer(p){
   pmName.textContent = p.name;
   pmWeave.textContent = p.weave || ''; pmWeave.hidden = !p.weave;
   pmPrice.textContent = p.price || ''; pmPrice.hidden = !p.price;
+  if(p.price && p.oldPrice && percentOff(p)){
+    const was = el('s','price-old', p.oldPrice);
+    pmPrice.append(' ', was);
+  }
   const sold = p.status === 'soldout';
   pmAdd.hidden = sold; pmBuy.hidden = sold; pmSold.hidden = !sold;
   pmBuy.href = singleOrderLink(p);
@@ -404,6 +468,7 @@ function attachTilt(card){
 }
 
 /* ---------- first paint ---------- */
+renderCats();
 renderFilters();
 renderGrid();
 })();

@@ -25,16 +25,24 @@
 
 <!-- ================= NAV ================= -->
 <nav class="nav" id="nav">
+  <div class="announce">
+    <span class="announce-full">Free delivery all across Qatar&ensp;·&ensp;Cash on delivery — pay at your door</span>
+    <span class="announce-short">Free delivery across Qatar&ensp;·&ensp;COD</span>
+  </div>
   <div class="wrap nav-inner">
     <a href="#top" class="brand" aria-label="Vestro by RA — home">
       <img class="brand-mark" src="logo-mark.png" alt="" width="38" height="38" />
       <span class="brand-name">Vestro</span>
       <span class="brand-by">by <span class="ra-r">R</span><span class="ra-a">A</span></span>
     </a>
-    <div class="nav-links">
+    <button class="nav-burger" id="navBurger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-links" id="navLinks">
       <a href="#collection">Collection</a>
       <a href="#instagram">Instagram</a>
       <a href="#gift">Delivery</a>
+      <a href="#story">Our story</a>
       <a href="#why">Why Vestro</a>
       <a class="nav-cta" href="https://wa.me/97466194953?text=Hi%20Vestro%20by%20RA!%20I%27d%20like%20to%20place%20an%20order%20%E2%9C%A8" target="_blank" rel="noopener">Order on WhatsApp</a>
     </div>
@@ -90,6 +98,9 @@
       A small, honest edit — sarees, modern wear and work wear, every piece
       photographed as it is and sent with a little extra care in the fold.
     </p>
+
+    <!-- shop-by-category circles (appear when the collection has more than one) -->
+    <div class="cat-row reveal" id="catRow" hidden></div>
 
     <!-- category filters (appear when the collection has more than one) -->
     <div class="filter-row reveal" id="filterRow" hidden></div>
@@ -295,6 +306,26 @@
   </div>
 </section>
 
+<!-- ================= STORY ================= -->
+<section class="section story" id="story">
+  <div class="wrap story-inner">
+    <p class="eyebrow reveal">The woman behind Vestro</p>
+    <h2 class="reveal" style="transition-delay:.08s">A small Doha boutique that <em>celebrates every woman</em></h2>
+    <p class="reveal" style="transition-delay:.16s">
+      Vestro by RA started with one belief — that what you wear should make you
+      feel powerful. From classic kasavu sarees to sharp work wear, every single
+      piece is handpicked, checked and folded by RA herself in Doha.
+    </p>
+    <p class="reveal" style="transition-delay:.22s">
+      No warehouse, no middlemen — just a curated edit, honest photos, real
+      conversations on WhatsApp, and free delivery to your door anywhere in Qatar.
+    </p>
+    <div class="cta-row reveal" style="justify-content:center;transition-delay:.3s">
+      <a class="btn btn-story" href="https://wa.me/97466194953?text=Hi%20RA!%20I%27d%20love%20to%20know%20more%20about%20Vestro%20%E2%9C%A8" target="_blank" rel="noopener">Say hello to RA</a>
+    </div>
+  </div>
+</section>
+
 <!-- ================= ORDER ================= -->
 <section class="section order" id="order">
   <div class="wrap">
@@ -322,10 +353,30 @@
 
 <!-- ================= FOOTER ================= -->
 <footer>
-  <div class="wrap foot-inner">
-    <span class="brand-name">Vestro <span style="font-family:var(--body);font-size:.6rem;letter-spacing:.4em;color:var(--gold-hi)">BY <span class="ra-r">R</span><span class="ra-a">A</span></span></span>
-    <span>Unlock Your Era — Doha, Qatar · Free delivery · COD</span>
+  <div class="wrap foot-grid">
+    <div class="foot-col foot-brand">
+      <span class="brand-name">Vestro <span style="font-family:var(--body);font-size:.6rem;letter-spacing:.4em;color:var(--gold-hi)">BY <span class="ra-r">R</span><span class="ra-a">A</span></span></span>
+      <p class="foot-tag">Unlock Your Era</p>
+      <p class="foot-blurb">Handpicked sarees, modern wear and work wear — picked with care in Doha and delivered free, anywhere in Qatar. Cash on delivery, always.</p>
+    </div>
+    <div class="foot-col">
+      <h4>Shop</h4>
+      <a href="#collection">The collection</a>
+      <a href="#instagram">Latest on Instagram</a>
+      <a href="#gift">How delivery works</a>
+      <a href="#why">Why Vestro</a>
+    </div>
+    <div class="foot-col">
+      <h4>Get in touch</h4>
+      <a href="https://wa.me/97466194953" target="_blank" rel="noopener">WhatsApp — +974 6619 4953</a>
+      <a href="https://instagram.com/vestro_by_ra" target="_blank" rel="noopener">Instagram — @vestro_by_ra</a>
+      <a href="https://www.facebook.com/share/1HUTnpnypa/?mibextid=wwXIfr" target="_blank" rel="noopener">Facebook — Vestro by RA</a>
+      <span class="foot-loc">Doha, Qatar</span>
+    </div>
+  </div>
+  <div class="wrap foot-bottom">
     <span>© <span id="yr"></span> Vestro by RA</span>
+    <span>Free delivery · Cash on delivery</span>
   </div>
 </footer>
 

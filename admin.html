@@ -243,6 +243,10 @@ footer{padding:1.6rem 0;text-align:center;font-size:.72rem;letter-spacing:.16em;
       <label for="pPrice">Price (optional)</label>
       <input type="text" id="pPrice" maxlength="30" placeholder="e.g. QR 450 — leave empty for 'price on WhatsApp'" />
 
+      <label for="pOldPrice">Original price (optional)</label>
+      <input type="text" id="pOldPrice" maxlength="30" placeholder="e.g. QR 550 — shows struck through with a % off tag" />
+      <p class="hint">Fill this only for discounted pieces — the site shows it crossed out next to the price, with an automatic "% off" tag on the photo.</p>
+
       <label>Status</label>
       <div class="status-row">
         <label><input type="radio" name="pStatus" value="available" checked /><span>Available</span></label>
@@ -456,6 +460,7 @@ async function init(){
     $('pName').value = p ? p.name : '';
     $('pWeave').value = p ? (p.weave || '') : '';
     $('pPrice').value = p ? (p.price || '') : '';
+    $('pOldPrice').value = p ? (p.oldPrice || '') : '';
     $('pCat').value = p && ['saree','modern','workwear'].includes(p.category) ? p.category : 'saree';
     photos = p ? (p.images && p.images.length ? [...p.images] : (p.image ? [p.image] : [])) : [];
     setStyle(p && p.style ? p.style : 'goldtissue');
@@ -534,6 +539,7 @@ async function init(){
       name: $('pName').value.trim(),
       weave: $('pWeave').value.trim(),
       price: $('pPrice').value.trim(),
+      oldPrice: $('pOldPrice').value.trim(),
       category: $('pCat').value,
       images: photos,
       image: photos[0] || '',

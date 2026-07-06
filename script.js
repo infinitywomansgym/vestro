@@ -9,6 +9,20 @@ const nav = document.getElementById('nav');
 const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 40);
 window.addEventListener('scroll', onScroll, {passive:true}); onScroll();
 
+/* ---------- MOBILE MENU ---------- */
+const burger = document.getElementById('navBurger');
+const navLinks = document.getElementById('navLinks');
+if(burger && navLinks){
+  const setMenu = (open) => {
+    nav.classList.toggle('menu-open', open);
+    burger.setAttribute('aria-expanded', String(open));
+    burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  };
+  burger.addEventListener('click', ()=> setMenu(!nav.classList.contains('menu-open')));
+  navLinks.querySelectorAll('a').forEach(a=> a.addEventListener('click', ()=> setMenu(false)));
+  document.addEventListener('keydown', e=>{ if(e.key === 'Escape') setMenu(false); });
+}
+
 /* ---------- YEAR ---------- */
 document.getElementById('yr').textContent = new Date().getFullYear();
 
