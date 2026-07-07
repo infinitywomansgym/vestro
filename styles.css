@@ -91,8 +91,12 @@ h2{font-size:clamp(2.2rem,4.6vw,3.6rem);margin:.9rem 0 1.1rem}
 .brand{display:flex;align-items:center;gap:.6rem}
 .brand-mark{width:38px;height:38px;border-radius:50%;flex:none;border:1px solid rgba(185,138,62,.5);box-shadow:0 3px 10px -3px rgba(51,36,31,.3)}
 .brand-by{align-self:flex-end;padding-bottom:.3rem}
-.brand-name{font-family:var(--display);font-size:1.45rem;letter-spacing:.02em}
-.brand-by{font-size:.62rem;letter-spacing:.4em;text-transform:uppercase;color:var(--maroon)}
+.brand-name{
+  font-family:var(--display);font-size:1.45rem;letter-spacing:.02em;
+  background:var(--gold-grad);background-size:220% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.brand-by{font-size:.62rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gold-text)}
 .ra-r{color:#e0559c;font-weight:600}
 .ra-a{color:#4f74d8;font-weight:600}
 .nav-links{display:flex;gap:2.2rem;align-items:center;font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;font-weight:400}
