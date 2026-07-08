@@ -519,7 +519,7 @@ footer{
   gap:clamp(2rem,5vw,4.5rem);align-items:start;
 }
 .foot-col{display:flex;flex-direction:column;gap:.55rem;align-items:flex-start}
-.foot-brand .brand-name{font-size:1.35rem;color:var(--paper)}
+.foot-brand .brand-name{font-size:1.35rem}
 .foot-tag{font-size:.66rem;letter-spacing:.34em;text-transform:uppercase;color:var(--gold-hi);margin-top:.2rem}
 .foot-blurb{font-size:.86rem;line-height:1.7;max-width:34ch;margin-top:.6rem}
 .foot-col h4{
