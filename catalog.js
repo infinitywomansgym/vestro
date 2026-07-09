@@ -53,9 +53,14 @@ function readCart(){
 function writeCart(items){ localStorage.setItem(CART_KEY, JSON.stringify(items)); }
 
 /* ---------- WhatsApp message builders ---------- */
+/* link that opens the site straight onto this product's photos, so the
+   order message shows exactly which piece is meant */
+function productLink(id){
+  return `${location.origin}${location.pathname}#p=${encodeURIComponent(id)}`;
+}
 function singleOrderLink(p){
   const price = p.price ? ` (${p.price})` : '';
-  const msg = `Hi Vestro by RA! I'd like to order the *${p.name}*${price} ✨\nPlease confirm availability & delivery.`;
+  const msg = `Hi Vestro by RA! I'd like to order the *${p.name}*${price} ✨\n📷 ${productLink(p.id)}\nPlease confirm availability & delivery.`;
   return `https://wa.me/${WA}?text=${encodeURIComponent(msg)}`;
 }
 /* always use the latest name/price from the loaded products, not what
@@ -68,7 +73,7 @@ function liveItem(c){
 function basketOrderLink(items){
   const lines = items.map((c,i)=>{
     const t = liveItem(c);
-    return `${i+1}. ${t.name}${t.price ? ' — '+t.price : ''}`;
+    return `${i+1}. ${t.name}${t.price ? ' — '+t.price : ''}\n   📷 ${productLink(c.id)}`;
   });
   const msg = `Hi Vestro by RA! ✨ I'd like to order these:\n\n${lines.join('\n')}\n\nTotal pieces: ${items.length}\nPlease confirm availability, price & delivery.`;
   return `https://wa.me/${WA}?text=${encodeURIComponent(msg)}`;
@@ -248,7 +253,7 @@ function cardFor(p, i){
   if(p.status === 'soldout'){
     foot.appendChild(el('span','chip chip-sold','Sold out'));
     const ask = el('a','chip','Ask on WhatsApp');
-    ask.href = `https://wa.me/${WA}?text=${encodeURIComponent(`Hi! Will the "${p.name}" be back in stock? 🤍`)}`;
+    ask.href = `https://wa.me/${WA}?text=${encodeURIComponent(`Hi! Will the "${p.name}" be back in stock? 🤍\n📷 ${productLink(p.id)}`)}`;
     ask.target = '_blank'; ask.rel = 'noopener';
     foot.appendChild(ask);
   }else{
@@ -471,4 +476,15 @@ function attachTilt(card){
 renderCats();
 renderFilters();
 renderGrid();
+
+/* deep link: opening vestrobyra.com/#p=<id> (from an order message) jumps
+   straight to that product's photos */
+const deep = location.hash.match(/^#p=(.+)$/);
+if(deep && pmBackdrop){
+  const p = products.find(x => x.id === decodeURIComponent(deep[1]));
+  if(p){
+    document.getElementById('collection')?.scrollIntoView();
+    openViewer(p);
+  }
+}
 })();
