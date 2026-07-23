@@ -228,11 +228,9 @@ footer{padding:1.6rem 0;text-align:center;font-size:.72rem;letter-spacing:.16em;
       </div>
 
       <label for="pCat">Category</label>
-      <select id="pCat">
-        <option value="saree">Saree</option>
-        <option value="modern">Modern wear</option>
-        <option value="workwear">Work wear</option>
-      </select>
+      <select id="pCat"></select>
+      <input type="text" id="pCatNew" class="hiddenview" maxlength="30" placeholder="e.g. Kurthis" />
+      <p class="hint">Pick a category, or choose “➕ New category…” to add one — like Kurthis, Lehengas or Kids wear. New categories appear on the site automatically.</p>
 
       <label for="pName">Name *</label>
       <input type="text" id="pName" required maxlength="60" placeholder="e.g. Rose Gold Kasavu" />
@@ -274,6 +272,18 @@ footer{padding:1.6rem 0;text-align:center;font-size:.72rem;letter-spacing:.16em;
    ========================================================================== */
 const $ = id => document.getElementById(id);
 const show = (el, on=true) => el.classList.toggle('hiddenview', !on);
+
+/* Categories are free-form. These three always appear; anything the owner types
+   (e.g. "Kurthis") is added on top. Older products saved with short keys are
+   shown under their proper name. Keep this in sync with catalog.js. */
+const DEFAULT_CATS = ['Sarees', 'Modern wear', 'Work wear'];
+const LEGACY_CATS = { saree:'Sarees', modern:'Modern wear', workwear:'Work wear' };
+const NEW_CAT = '__new__';
+function catLabel(p){
+  const c = ((p && p.category) || '').trim();
+  if(!c) return 'Sarees';
+  return LEGACY_CATS[c] || c;
+}
 
 const cfg = window.VESTRO_FIREBASE_CONFIG;
 const configured = cfg && cfg.apiKey && !/^PASTE/.test(cfg.apiKey);
@@ -357,11 +367,10 @@ async function init(){
       if(cover) thumb.style.backgroundImage = `url("${cover}")`;
       row.appendChild(thumb);
 
-      const CAT_LABEL = { saree:'Saree', modern:'Modern wear', workwear:'Work wear' };
       const info = document.createElement('div'); info.className = 'row-info';
       const h = document.createElement('h3'); h.textContent = p.name; info.appendChild(h);
       const w = document.createElement('p');
-      w.textContent = (CAT_LABEL[p.category] || 'Saree') + (p.weave ? ' · ' + p.weave : '');
+      w.textContent = catLabel(p) + (p.weave ? ' · ' + p.weave : '');
       info.appendChild(w);
       const pr = document.createElement('p'); pr.className = 'p-price';
       pr.textContent = p.price || 'Price on WhatsApp'; info.appendChild(pr);
@@ -454,6 +463,35 @@ async function init(){
     document.querySelectorAll('#swatches .sw').forEach(s=> s.classList.toggle('sel', s.dataset.style === style));
   }
 
+  /* the category dropdown = defaults + every category already in use, alphabetically,
+     plus a "New category…" row that reveals a text box */
+  function allCats(){
+    const set = new Set(DEFAULT_CATS);
+    products.forEach(p => set.add(catLabel(p)));
+    const extras = [...set].filter(c => !DEFAULT_CATS.includes(c)).sort((a,b)=> a.localeCompare(b));
+    return [...DEFAULT_CATS, ...extras];
+  }
+  function toggleNewCat(){
+    const isNew = $('pCat').value === NEW_CAT;
+    show($('pCatNew'), isNew);
+    if(isNew) $('pCatNew').focus();
+  }
+  function fillCatSelect(selected){
+    const sel = $('pCat');
+    sel.textContent = '';
+    const cats = allCats();
+    if(selected && !cats.includes(selected)) cats.push(selected);
+    cats.forEach(c=>{
+      const o = document.createElement('option');
+      o.value = c; o.textContent = c; sel.appendChild(o);
+    });
+    const nw = document.createElement('option');
+    nw.value = NEW_CAT; nw.textContent = '➕ New category…';
+    sel.appendChild(nw);
+    sel.value = (selected && cats.includes(selected)) ? selected : cats[0];
+    toggleNewCat();
+  }
+
   function openForm(p){
     editing = p || null;
     $('dlgTitle').textContent = p ? 'Edit product' : 'Add product';
@@ -461,7 +499,8 @@ async function init(){
     $('pWeave').value = p ? (p.weave || '') : '';
     $('pPrice').value = p ? (p.price || '') : '';
     $('pOldPrice').value = p ? (p.oldPrice || '') : '';
-    $('pCat').value = p && ['saree','modern','workwear'].includes(p.category) ? p.category : 'saree';
+    $('pCatNew').value = '';
+    fillCatSelect(p ? catLabel(p) : DEFAULT_CATS[0]);
     photos = p ? (p.images && p.images.length ? [...p.images] : (p.image ? [p.image] : [])) : [];
     setStyle(p && p.style ? p.style : 'goldtissue');
     document.querySelector(`input[name=pStatus][value=${p ? p.status : 'available'}]`).checked = true;
@@ -480,6 +519,7 @@ async function init(){
   $('addBtn').addEventListener('click', ()=> openForm(null));
   $('backBtn').addEventListener('click', closeForm);
   $('cancelBtn').addEventListener('click', closeForm);
+  $('pCat').addEventListener('change', toggleNewCat);
 
   document.querySelectorAll('#swatches .sw').forEach(s=>
     s.addEventListener('click', ()=> setStyle(s.dataset.style)));
@@ -535,18 +575,20 @@ async function init(){
   $('prodForm').addEventListener('submit', async e=>{
     e.preventDefault();
     const btn = $('saveBtn'), msg = $('formMsg');
+    let category = $('pCat').value === NEW_CAT ? $('pCatNew').value.trim() : $('pCat').value.trim();
     const payload = {
       name: $('pName').value.trim(),
       weave: $('pWeave').value.trim(),
       price: $('pPrice').value.trim(),
       oldPrice: $('pOldPrice').value.trim(),
-      category: $('pCat').value,
+      category: category,
       images: photos,
       image: photos[0] || '',
       style: chosenStyle,
       status: document.querySelector('input[name=pStatus]:checked').value
     };
     if(!payload.name){ msg.textContent = 'Give the product a name.'; return; }
+    if(!payload.category){ msg.textContent = 'Choose a category, or type a name for the new one.'; return; }
     if(photos.reduce((s,p)=> s + p.length, 0) > 900000){
       msg.textContent = 'These photos are too heavy together — remove one and try again.';
       return;

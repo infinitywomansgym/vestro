@@ -18,8 +18,28 @@ const DEFAULTS = [
   { id:'d4', name:'Marigold Festive',        weave:'Warm ochre · occasion wear',            price:'', style:'marigold',   status:'available' }
 ];
 const STYLE_MAT = { goldtissue:'mat-velvet', saffron:'mat-forest', temple:'mat-velvet', marigold:'mat-forest' };
-const CATS = { saree:'Sarees', modern:'Modern wear', workwear:'Work wear' };
-function catOf(p){ return CATS[p.category] ? p.category : 'saree'; }
+/* Categories are free-form: whatever the owner types in the admin panel becomes
+   a category (e.g. "Kurthis", "Lehengas"). Older products were saved with short
+   keys, so map those to their display names; anything else is shown as typed. */
+const LEGACY_CATS = { saree:'Sarees', modern:'Modern wear', workwear:'Work wear' };
+const CAT_ORDER = ['Sarees', 'Modern wear', 'Work wear'];
+function catOf(p){
+  const c = (p.category || '').trim();
+  if(!c) return 'Sarees';
+  return LEGACY_CATS[c] || c;
+}
+/* the distinct categories present, defaults first then new ones alphabetically */
+function catsPresent(){
+  const present = [...new Set(products.map(catOf))];
+  present.sort((a,b)=>{
+    const ia = CAT_ORDER.indexOf(a), ib = CAT_ORDER.indexOf(b);
+    if(ia !== -1 && ib !== -1) return ia - ib;
+    if(ia !== -1) return -1;
+    if(ib !== -1) return 1;
+    return a.localeCompare(b);
+  });
+  return present;
+}
 
 /* ---------- load products ---------- */
 function firebaseReady(){
@@ -282,11 +302,11 @@ function setCat(val){
 /* shop-by-category circles (Laly's-style), built from the live products */
 function renderCats(){
   if(!catRow) return;
-  const present = [...new Set(products.map(catOf))];
+  const present = catsPresent();
   if(present.length < 2){ catRow.hidden = true; return; }
   catRow.hidden = false;
   catRow.textContent = '';
-  Object.keys(CATS).filter(c => present.includes(c)).forEach(c=>{
+  present.forEach(c=>{
     const items = products.filter(p => catOf(p) === c);
     const b = el('button','cat-circle' + (activeCat === c ? ' cat-on' : ''));
     b.type = 'button';
@@ -294,7 +314,7 @@ function renderCats(){
     const cover = items.map(p => imagesOf(p)[0]).find(Boolean);
     if(cover) img.style.backgroundImage = `url("${cover.replace(/"/g,'%22')}")`;
     b.appendChild(img);
-    b.appendChild(el('b', null, CATS[c]));
+    b.appendChild(el('b', null, c));
     b.appendChild(el('small', null, items.length === 1 ? '1 piece' : `${items.length} pieces`));
     b.addEventListener('click', ()=> setCat(activeCat === c ? 'all' : c));
     catRow.appendChild(b);
@@ -321,7 +341,7 @@ function renderGrid(){
 
 function renderFilters(){
   if(!filterRow) return;
-  const present = [...new Set(products.map(catOf))];
+  const present = catsPresent();
   if(present.length < 2){ filterRow.hidden = true; return; }
   filterRow.hidden = false;
   filterRow.textContent = '';
@@ -332,7 +352,7 @@ function renderFilters(){
     filterRow.appendChild(b);
   };
   mk('all','All');
-  Object.keys(CATS).filter(c => present.includes(c)).forEach(c => mk(c, CATS[c]));
+  present.forEach(c => mk(c, c));
 }
 
 /* ---------- product viewer (click a saree to open) ---------- */
